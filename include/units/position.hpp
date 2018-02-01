@@ -45,8 +45,8 @@ class unit3d {
 public:
   T x,y,z;
 
-  unit2d<T> xy() { return unit2d(x,y); }
-  unit2d<T> yz() { return unit2d(y,z); }
+  unit2d<T> xy() { return unit2d<T>(x,y); }
+  unit2d<T> yz() { return unit2d<T>(y,z); }
 
   unit3d() { }  
   unit3d(const T& X,const T& Y,const T& Z)
