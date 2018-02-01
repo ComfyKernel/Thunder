@@ -20,6 +20,11 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
+  if(glewInit() != GLEW_OK) {
+    std::cout<<"GLEW Failed to initialize!\n";
+    return -1;
+  }
+
   while(win.isOpen()) {
     win.pollEvents();
 
