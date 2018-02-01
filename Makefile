@@ -36,7 +36,7 @@ $(BUILD)/$(BINARY): $(OUTPUTFILES)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm $(BUILD)/$(BINARY)
+	rm $(BUILD)/$(BINARY) $(OUTPUTFILES)
 
 check:
 	ar -t $(BUILD)/$(BINARY)
