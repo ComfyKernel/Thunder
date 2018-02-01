@@ -1,6 +1,8 @@
 #ifndef H_THUNDER_MAIN_HPP
 #define H_THUNDER_MAIN_HPP
 
+#include "units.hpp"
+
 #include <string>
 
 extern "C" {
