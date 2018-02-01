@@ -9,7 +9,7 @@ ORIGIN = .
 BUILD  = $(ORIGIN)/build
 SOURCE = $(ORIGIN)/source
 
-SOURCEFILES  = $(shell find -type f -name "*.cpp")
+SOURCEFILES  = $(shell find $(SOURCE)/ -type f -name "*.cpp")
 OUTPUTFILES  = $(patsubst %.cpp, %.o, $(SOURCEFILES))
 
 BINARY       = libthunder.a
@@ -37,6 +37,15 @@ $(BUILD)/$(BINARY): $(OUTPUTFILES)
 
 clean:
 	rm $(BUILD)/$(BINARY) $(OUTPUTFILES)
+
+test:
+	make -C $(ORIGIN)/tester/
+
+cleantest:
+	make clean -C $(ORIGIN)/tester/
+
+runtest:
+	$(BUILD)/tester
 
 check:
 	ar -t $(BUILD)/$(BINARY)
