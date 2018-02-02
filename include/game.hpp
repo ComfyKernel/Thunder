@@ -5,6 +5,7 @@
 
 #include <string>
 
+
 extern "C" {
   namespace th {
     class game {
