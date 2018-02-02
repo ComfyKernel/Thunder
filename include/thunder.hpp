@@ -3,6 +3,7 @@
 
 #include "units.hpp"
 #include "window.hpp"
+#include "game.hpp"
 
 #include <string>
 

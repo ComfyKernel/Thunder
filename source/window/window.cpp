@@ -16,8 +16,10 @@ public:
   bool create(const std::string& n, uint2d p, uint2d s) {
     if(!_sdl_has_init_) {
       if(SDL_Init(SDL_INIT_VIDEO) != 0) {
-	std::cout<<"Failed to initialized SDL2!\nReason :\n"
+	std::cout<<"Failed to initialize SDL2!\nReason :\n"
 		 <<SDL_GetError()<<"\n";
+	throw std::runtime_error(std::string("Failed to initialize SDL2!\n")
+				 + SDL_GetError());
 	return false;
       }
     }
@@ -29,8 +31,10 @@ public:
 			   SDL_WINDOW_RESIZABLE);
 
     if(!win) {
-      std::cout<<"Failed to create an SDL2 window!\nReason :\n"
+      std::cout<<"Failed to create an SDL2 Window!\nReason :\n"
 	       <<SDL_GetError()<<"\n";
+      throw std::runtime_error(std::string("Failed to create an SDL2 Window!\n")
+			       + SDL_GetError());
       return false;
     }
 
@@ -46,8 +50,10 @@ public:
     SDL_GL_MakeCurrent(win, ctx);
 
     if(!ctx) {
-      std::cout<<"Failed to get an OpenGL context!\nReason :\n"
+      std::cout<<"Failed to get an OpenGL Context!\nReason :\n"
 	       <<SDL_GetError()<<"\n";
+      throw std::runtime_error(std::string("Failed get an OpenGL Contest!\n")
+			       + SDL_GetError());
       return false;
     }
 

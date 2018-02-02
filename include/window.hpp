@@ -4,30 +4,31 @@
 #include "units/special.hpp"
 
 #include <string>
+extern "C" {
+  namespace th {
+    class window {
+    private:
+      class _impl;
+      _impl* _wimpl;
+      
+    public:
+      window();
+      window(const std::string&, uint2d, uint2d);
+      
+      bool open (const std::string&, uint2d, uint2d);
+      void close();
 
-namespace th {
-  class window {
-  private:
-    class _impl;
-    _impl* _wimpl;
-    
-  public:
-    window();
-    window(const std::string&, uint2d, uint2d);
+      bool isOpen    ();
+      void pollEvents();
+      void swap      ();
 
-    bool open (const std::string&, uint2d, uint2d);
-    void close();
+      const std::string& name    () const;
+      const uint2d&      position() const;
+      const uint2d&      size    () const;
 
-    bool isOpen    ();
-    void pollEvents();
-    void swap      ();
-
-    const std::string& name    () const;
-    const uint2d&      position() const;
-    const uint2d&      size    () const;
-
-    ~window();
+      ~window();
+    };
   };
-};
+}
 
 #endif
