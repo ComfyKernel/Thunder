@@ -1,5 +1,7 @@
 #include "../../include/gl/buffer.hpp"
 
+#include <iostream>
+
 gl::buffer::buffer() { }
 
 void gl::buffer::create() {

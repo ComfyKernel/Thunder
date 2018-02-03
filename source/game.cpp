@@ -65,6 +65,8 @@ bool th::game::run(const uint2d& pos, const uint2d& size) {
   }
 
   onExit();
+
+  _gimpl->destroy();
   
   return true;
 }

@@ -11,10 +11,8 @@ namespace gl {
     GLuint name() const;
     object();
 
-    virtual void create ();
-    virtual void destroy();
-    
-    ~object();
+    virtual void create () { };
+    virtual void destroy() { };
 
     operator GLuint() const;
   };

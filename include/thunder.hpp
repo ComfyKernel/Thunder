@@ -9,6 +9,8 @@
 #include <string>
 
 extern "C" {
+#define getArraySize(arr) (sizeof(arr)/sizeof(arr[0]))
+  
   namespace th {
     const std::string& getProperty(const std::string&);
   };
