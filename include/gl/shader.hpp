@@ -13,6 +13,9 @@ namespace gl {
     void create ();
     void create (const std::string&, GLenum);
 
+    void source (const std::string&);
+    bool compile();
+
     bool load   (const std::string&, GLenum);
     
     void destroy();

@@ -6,6 +6,16 @@
 
 #include <GL/glew.h>
 
+void dbg_gl_message_callback(__attribute__((unused)) GLenum  src,
+			     __attribute__((unused)) GLenum  type,
+			                             GLuint  id,
+			     __attribute__((unused)) GLenum  severity,
+			     __attribute__((unused)) GLsizei length,
+			                       const GLchar* message,
+			     __attribute__((unused)) const void* userParam) {
+  std::cout<<"[GL Info] [ID: "<<id<<"] "<<message<<"\n";
+}
+
 class th::game::_impl {
 public:
   window win;
@@ -26,6 +36,10 @@ public:
       throw std::runtime_error("Failed to initialize GLEW!\n");
       return false;
     }
+
+    glEnable(GL_DEBUG_OUTPUT);
+
+    glDebugMessageCallback(dbg_gl_message_callback, nullptr);
 
     running = true;
 

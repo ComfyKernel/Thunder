@@ -14,12 +14,19 @@ private:
 
   gl::shader vshad;
   gl::shader fshad;
+
+  gl::program prog;
+
+  GLuint vao;
   
 public:
   const std::string& name() const { return _name; }
 
   void onStart() {
     std::cout<<"Starting\n";
+
+    glCreateVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     float fdat[] = {
       -1.f, -1.f, 0.f,
@@ -38,6 +45,12 @@ public:
     fshad.load("test.vert", GL_VERTEX_SHADER);
     vshad.load("test.frag", GL_FRAGMENT_SHADER);
 
+    prog.create({fshad, vshad});
+
+    glUseProgram(prog);
+
+    glEnableVertexAttribArray(0);
+
     std::cout<<"Finished Startup\n";
   }
 
@@ -45,6 +58,14 @@ public:
     std::cout<<"Exit called\n";
 
     vbuff.destroy();
+    ibuff.destroy();
+
+    vshad.destroy();
+    fshad.destroy();
+
+    prog.destroy();
+
+    glDeleteVertexArrays(1, &vao);
     
     std::cout<<"Exiting\n";
   }
@@ -58,7 +79,11 @@ public:
   }
 
   void onDraw     (float delta) {
+    glBindBuffer(GL_ARRAY_BUFFER, vbuff);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void*)0);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuff);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, (void*)0);
   }
 
   void onDrawEnd  (float delta) {

@@ -17,18 +17,30 @@ void gl::shader::create(const std::string& data, GLenum type) {
 
   _name = glCreateShader(type);
 
-  const GLint len = data.length();
-  const char* dat = &data[0];
+  if(data.empty()) {
+    std::cout<<"Warning: Data passed to shader is empty!\n";
+  }
+  
+  source(data);
+
+  compile();
+}
+
+void gl::shader::source(const std::string& src) {
+  const GLint len = src.length();
+  const char* dat = &src[0];
 
   glShaderSource(_name, 1, &dat, &len);
+}
 
+bool gl::shader::compile() {
   glCompileShader(_name);
-
+  
   GLint info = 0;
   glGetShaderiv(_name, GL_COMPILE_STATUS, &info);
 
   if(info) {
-    return;
+    return true;
   }
 
   std::cout<<"Shader compilation failed!\n";
@@ -42,6 +54,8 @@ void gl::shader::create(const std::string& data, GLenum type) {
   std::cout<<log<<"\n";
 
   delete log;
+
+  return false;
 }
 
 bool gl::shader::load(const std::string& file, GLenum type) {
