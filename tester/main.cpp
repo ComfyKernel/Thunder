@@ -29,18 +29,18 @@ public:
     glBindVertexArray(vao);
 
     float fdat[] = {
-      -1.f, -1.f, 0.f,
-       1.f, -1.f, 0.f,
-       0.f,  1.f, 0.f
+      0.f, 0.f, 0.f,
+      1.f, 0.f, 0.f,
+      1.f, 1.f, 0.f,
+      0.f, 1.f, 0.f
     };
-    
-    vbuff.create(fdat, getArraySize(fdat), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
     unsigned short idat[] = {
-      0, 1, 2
+      0, 1, 2, 2, 3, 0
     };
-
-    ibuff.create(idat, getArraySize(idat), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+    
+    vbuff.create(fdat, 12 * sizeof(float), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+    ibuff.create(idat, 6 * sizeof(unsigned short), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
 
     fshad.load("test.vert", GL_VERTEX_SHADER);
     vshad.load("test.frag", GL_FRAGMENT_SHADER);
@@ -83,7 +83,7 @@ public:
     glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void*)0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuff);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, (void*)0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)0);
   }
 
   void onDrawEnd  (float delta) {
