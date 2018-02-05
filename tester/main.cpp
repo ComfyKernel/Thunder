@@ -10,8 +10,14 @@ class testgame : public th::game {
 private:
   const std::string _name = "Test Game";
 
-  rn::sprite spr = rn::sprite(float2d(0.f, 0.f),
+  rn::sprite spr = rn::sprite(float2d(0.f  , 0.f),
 			      float2d(100.f, 100.f));
+
+  rn::sprite spr2 = rn::sprite(float2d(0.f  , 0.f),
+			       float2d(100.f, 100.f));
+
+  rn::sprite spr3 = rn::sprite(float2d(0.f  , 0.f),
+			       float2d(100.f, 100.f));
 
   GLuint vao;
   
@@ -36,7 +42,14 @@ public:
   }
 
   void onUpdate   (float delta) {
+    spr3.position.x = (sin(time() / 1600.0f) * 200.f) + ((win.size().x / 2) - 50);
+    spr3.position.y = (cos(time() / 1600.0f) * 200.f) + ((win.size().y / 2) - 50);
     
+    spr2.position.x = (sin(time() / 800.0f) * 200.f) + ((win.size().x / 2) - 50);
+    spr2.position.y = (cos(time() / 800.0f) * 200.f) + ((win.size().y / 2) - 50);
+
+    spr.position.x = (sin(time() / 400.f) * 200.f) + ((win.size().x / 2) - 50);
+    spr.position.y = (cos(time() / 400.f) * 200.f) + ((win.size().y / 2) - 50);
   }
 
   void onDrawStart(float delta) {
@@ -45,6 +58,8 @@ public:
 
   void onDraw     (float delta) {
     spr.draw();
+    spr2.draw();
+    spr3.draw();
   }
 
   void onDrawEnd  (float delta) {

@@ -29,12 +29,16 @@ public:
     _pos.x = x; _pos.y = y;
     return _pos;
   }
+
+  unsigned int milliseconds() {
+    return SDL_GetTicks();
+  }
   
   bool create(const std::string& n, uint2d p, uint2d s) {
     _name = n;
     
     if(!_sdl_has_init_) {
-      if(SDL_Init(SDL_INIT_VIDEO) != 0) {
+      if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
 	std::cout<<"Failed to initialize SDL2!\nReason :\n"
 		 <<SDL_GetError()<<"\n";
 	throw std::runtime_error(std::string("Failed to initialize SDL2!\n")
@@ -136,6 +140,10 @@ void th::window::pollEvents() {
 
 void th::window::swap() {
   _wimpl->swap();
+}
+
+unsigned int th::window::milliseconds() const {
+  _wimpl->milliseconds();
 }
 
 const std::string& th::window::name() const {

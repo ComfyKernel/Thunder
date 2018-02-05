@@ -85,7 +85,7 @@ void __draw_active_sprites() {
 			       glm::vec3(i->size.x, i->size.y, 0.f));
       
     if(i->textureIndependent) {
-	
+      
     }
       
     glUniformMatrix4fv(__spr_shad_matid, 1, false, &__sprite_out[0][0]);

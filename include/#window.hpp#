@@ -10,17 +10,10 @@ extern "C" {
     private:
       class _impl;
       _impl* _wimpl;
-
-      float t_delta;
-      float t_deltaEnd;
-      float t_deltaStart;
       
     public:
       window();
       window(const std::string&, uint2d, uint2d);
-
-      float delta();
-      float time ();
       
       bool open (const std::string&, uint2d, uint2d);
       void close();

@@ -72,9 +72,12 @@ gl::program& th::game::getSpriteShader() {
 }
 
 th::game::game()
-  : _gimpl{new th::game::_impl()} {
+  : _gimpl{new th::game::_impl()}, win{_gimpl->win} {
 
 }
+
+float th::game::delta() { return t_delta;                    }
+float th::game::time () { return _gimpl->win.milliseconds(); }
 
 bool th::game::run(const uint2d& pos, const uint2d& size) {
   _curr_game = this;
@@ -98,14 +101,22 @@ bool th::game::run(const uint2d& pos, const uint2d& size) {
 
   onStart();
 
+  t_deltaStart = _gimpl->win.milliseconds();
+  t_deltaEnd   = _gimpl->win.milliseconds();
+  t_delta = 0;
+
   while(_gimpl->running && _gimpl->win.isOpen()) {
+    t_deltaEnd = t_deltaStart;
+    t_deltaStart = _gimpl->win.milliseconds();
+    t_delta = (t_deltaStart - t_deltaEnd) / 1000.f;
+    
     _gimpl->win.pollEvents();
 
-    onUpdate(0.f);
+    onUpdate(t_delta);
 
-    onDrawStart(0.f);
-    onDraw     (0.f);
-    onDrawEnd  (0.f);
+    onDrawStart(t_delta);
+    onDraw     (t_delta);
+    onDrawEnd  (t_delta);
     
     _gimpl->win.swap();
   }

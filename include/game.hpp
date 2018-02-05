@@ -3,6 +3,7 @@
 
 #include "units/special.hpp"
 #include "gl/program.hpp"
+#include "window.hpp"
 
 #include <string>
 
@@ -14,12 +15,21 @@ extern "C" {
     protected:
       class _impl;
       _impl* _gimpl;
+
+      float t_delta;
+      float t_deltaEnd;
+      float t_deltaStart;
     
     public:
       glm::mat4&   getOrtho();
       gl::program& getSpriteShader();
       
       static game& currentGame();
+
+      float delta();
+      float time ();
+
+      window& win;
       
       game();
 
