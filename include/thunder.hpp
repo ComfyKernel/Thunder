@@ -5,6 +5,7 @@
 #include "window.hpp"
 #include "game.hpp"
 #include "gl.hpp"
+#include "render.hpp"
 
 #include <string>
 
