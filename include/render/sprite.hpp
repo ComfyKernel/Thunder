@@ -9,6 +9,8 @@ namespace rn {
     unsigned int __id;
     bool         __is_drawing = false;
 
+    static void drawSprites();
+
     float2d position;
     float2d size;
     

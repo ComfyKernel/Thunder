@@ -57,9 +57,11 @@ public:
   }
 
   void onDraw     (float delta) {
-    spr.draw();
+    spr.draw ();
     spr2.draw();
     spr3.draw();
+
+    rn::sprite::drawSprites();
   }
 
   void onDrawEnd  (float delta) {

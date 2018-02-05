@@ -75,23 +75,29 @@ void __draw_active_sprites() {
   __sprite_ortho = th::game::currentGame().getOrtho();
     
   for(auto& i : __draw_sprites) {
-    i->__is_drawing = false;
+    if(i->__is_drawing) {
+      i->__is_drawing = false;
       
-    __sprite_out = __sprite_ortho;
+      __sprite_out = __sprite_ortho;
       
-    __sprite_out *= glm::translate(glm::mat4(1),
-				   glm::vec3(i->position.x, i->position.y, 0.f));
-    __sprite_out *= glm::scale(glm::mat4(1),
-			       glm::vec3(i->size.x, i->size.y, 0.f));
+      __sprite_out *= glm::translate(glm::mat4(1),
+				     glm::vec3(i->position.x, i->position.y, 0.f));
+      __sprite_out *= glm::scale(glm::mat4(1),
+				 glm::vec3(i->size.x, i->size.y, 0.f));
       
-    if(i->textureIndependent) {
+      if(i->textureIndependent) {
+	
+      }
       
+      glUniformMatrix4fv(__spr_shad_matid, 1, false, &__sprite_out[0][0]);
+      
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)0);
     }
-      
-    glUniformMatrix4fv(__spr_shad_matid, 1, false, &__sprite_out[0][0]);
-      
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)0);
   }
+}
+
+void rn::sprite::drawSprites() {
+  __draw_active_sprites();
 }
 
 rn::sprite::sprite() { }
@@ -128,10 +134,6 @@ void rn::sprite::create(const float2d&  p, const float2d&  s,
 
 void rn::sprite::draw() {
   __is_drawing = true;
-
-  if(__id == (__draw_sprites.size() - 1)) {
-    __draw_active_sprites();
-  }
 }
 
 rn::sprite::~sprite() {
