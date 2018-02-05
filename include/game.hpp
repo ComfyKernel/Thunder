@@ -2,9 +2,11 @@
 #define H_GAME_SINGLE_HPP
 
 #include "units/special.hpp"
+#include "gl/program.hpp"
 
 #include <string>
 
+#include <glm/mat4x4.hpp>
 
 extern "C" {
   namespace th {
@@ -14,6 +16,11 @@ extern "C" {
       _impl* _gimpl;
     
     public:
+      glm::mat4&   getOrtho();
+      gl::program& getSpriteShader();
+      
+      static game& currentGame();
+      
       game();
 
       bool run(const uint2d&, const uint2d&);

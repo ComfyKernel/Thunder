@@ -1,6 +1,8 @@
 #include "../include/game.hpp"
 #include "../include/window.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <iostream>
 #include <exception>
 
@@ -18,9 +20,13 @@ void dbg_gl_message_callback(__attribute__((unused)) GLenum  src,
 
 class th::game::_impl {
 public:
+  glm::mat4 __ortho;
+  
   window win;
 
   bool running = false;
+
+  gl::program __spr_prog;
   
   bool create(const std::string& name,
 	      const uint2d& pos,
@@ -53,16 +59,42 @@ public:
   }
 };
 
+static th::game* _curr_game;
+
+th::game& th::game::currentGame() { return *_curr_game; }
+
+glm::mat4&   th::game::getOrtho() {
+  return _gimpl->__ortho;
+}
+
+gl::program& th::game::getSpriteShader() {
+  return _gimpl->__spr_prog;
+}
+
 th::game::game()
   : _gimpl{new th::game::_impl()} {
 
 }
 
 bool th::game::run(const uint2d& pos, const uint2d& size) {
+  _curr_game = this;
+  
   if(!_gimpl->create(name(), pos, size)) {
     std::cout<<"Cannot run, window failed to create.\n";
     return false;
   }
+
+  gl::shader spr_vshad;
+  gl::shader spr_fshad;
+
+  spr_vshad.load("sprite.vertex"  , GL_VERTEX_SHADER);
+  spr_fshad.load("sprite.fragment", GL_FRAGMENT_SHADER);
+
+  _gimpl->__spr_prog.create({spr_vshad, spr_fshad});
+
+  const uint2d& w_size = _gimpl->win.size();
+  
+  _gimpl->__ortho = glm::ortho(0.f, (float)w_size.x, 0.f, (float)w_size.y, -0.1f, 100.f);
 
   onStart();
 
@@ -79,6 +111,8 @@ bool th::game::run(const uint2d& pos, const uint2d& size) {
   }
 
   onExit();
+
+  _gimpl->__spr_prog.destroy();
 
   _gimpl->destroy();
   

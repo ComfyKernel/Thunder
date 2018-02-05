@@ -45,7 +45,9 @@ cleantest:
 	make clean -C $(ORIGIN)/tester/
 
 runtest:
-	$(BUILD)/tester
+	cd $(BUILD); \
+	./tester     \
+	cd ..
 
 check:
 	ar -t $(BUILD)/$(BINARY)

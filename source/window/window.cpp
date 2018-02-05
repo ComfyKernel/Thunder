@@ -12,8 +12,27 @@ public:
   SDL_GLContext ctx;
 
   bool open=false;
+
+  uint2d _siz, _pos;
+  std::string _name;
+
+  const uint2d& size() {
+    int x, y;
+    SDL_GetWindowSize(win, &x, &y);
+    _siz.x = x; _siz.y = y;
+    return _siz;
+  }
+
+  const uint2d& position() {
+    int x, y;
+    SDL_GetWindowPosition(win, &x, &y);
+    _pos.x = x; _pos.y = y;
+    return _pos;
+  }
   
   bool create(const std::string& n, uint2d p, uint2d s) {
+    _name = n;
+    
     if(!_sdl_has_init_) {
       if(SDL_Init(SDL_INIT_VIDEO) != 0) {
 	std::cout<<"Failed to initialize SDL2!\nReason :\n"
@@ -117,4 +136,16 @@ void th::window::pollEvents() {
 
 void th::window::swap() {
   _wimpl->swap();
+}
+
+const std::string& th::window::name() const {
+  _wimpl->_name;
+}
+
+const uint2d& th::window::size() const {
+  _wimpl->size();
+}
+
+const uint2d& th::window::position() const {
+  _wimpl->position();
 }
