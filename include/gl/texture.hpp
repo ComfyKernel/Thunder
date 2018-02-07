@@ -3,6 +3,8 @@
 
 #include "common.hpp"
 
+#include <string>
+
 namespace gl {
   class texture : public object {
   public:
