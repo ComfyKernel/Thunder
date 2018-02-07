@@ -20,6 +20,8 @@ private:
 			       float2d(100.f, 100.f));
 
   GLuint vao;
+
+  gl::texture tex;
   
 public:
   const std::string& name() const { return _name; }
@@ -29,6 +31,8 @@ public:
 
     glCreateVertexArrays(1, &vao);
     glBindVertexArray(vao);
+
+    tex.load("testimage.png");
 
     std::cout<<"Finished Startup\n";
   }

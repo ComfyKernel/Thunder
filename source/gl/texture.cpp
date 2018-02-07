@@ -14,6 +14,8 @@ void gl::texture::create() {
 }
 
 bool gl::texture::load(const std::string& file) {
+  create();
+  
   int w, h, d;
 
   unsigned char* data = stbi_load(file.c_str(), &w, &h, &d, STBI_rgb_alpha);
@@ -26,7 +28,11 @@ bool gl::texture::load(const std::string& file) {
   
   glBindTexture(GL_TEXTURE_2D, _name);
 
-  stb_image_free(data);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+	       w, h, 0, GL_RGBA,
+	       GL_UNSIGNED_BYTE, data);
+
+  stbi_image_free(data);
 
   return true;
 }
