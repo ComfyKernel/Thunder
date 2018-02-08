@@ -21,7 +21,8 @@ private:
 
   GLuint vao;
 
-  gl::texture tex;
+  gl::texture tex1;
+  gl::texture tex2;
   
 public:
   const std::string& name() const { return _name; }
@@ -34,11 +35,12 @@ public:
 
     glActiveTexture(GL_TEXTURE0);
 
-    tex.load("testimage.png");
+    tex1.load("testimage.png");
+    tex2.load("testimage2.png");
 
-    spr1.setTexture(tex);
-    spr2.setTexture(tex);
-    spr3.setTexture(tex);
+    spr1.setTexture(tex1);
+    spr2.setTexture(tex1);
+    spr3.setTexture(tex2);
 
     std::cout<<"Finished Startup\n";
   }
