@@ -51,3 +51,8 @@ runtest:
 
 check:
 	ar -t $(BUILD)/$(BINARY)
+
+submodules:
+	git submodule init
+	git submodule update
+	git submodule status

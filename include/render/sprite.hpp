@@ -3,12 +3,17 @@
 
 #include "../units/special.hpp"
 
+#include "../gl/texture.hpp"
+
 namespace rn {
   class sprite {
-  public:
+  protected:    
     unsigned int __id;
-    bool         __is_drawing = false;
 
+  public:
+    const gl::texture* __texture;
+    bool               __is_drawing = false;
+    
     static void drawSprites();
 
     float2d position;
@@ -16,6 +21,10 @@ namespace rn {
     
     float2d texposition;
     float2d texsize;
+
+    const gl::texture& texture();
+
+    void setTexture(const gl::texture&);
 
     bool textureIndependent = false;
 

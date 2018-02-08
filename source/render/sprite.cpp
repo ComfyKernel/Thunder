@@ -36,7 +36,8 @@ void __del_sprite(unsigned int id) {
 glm::mat4 __sprite_ortho;
 glm::mat4 __sprite_out;
   
-GLuint __spr_shad_matid;
+GLuint __spr_shad_matid,
+       __spr_text_matid;
   
 void __draw_active_sprites() {
   if(!__sprite_draw_initialized) {
@@ -59,6 +60,7 @@ void __draw_active_sprites() {
 			     GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
       
     __spr_shad_matid = glGetUniformLocation(th::game::currentGame().getSpriteShader(), "PVM");
+    __spr_text_matid = glGetUniformLocation(th::game::currentGame().getSpriteShader(), "TEX");
       
     __sprite_draw_initialized = true;
   }
@@ -73,6 +75,8 @@ void __draw_active_sprites() {
   glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void*)0);
     
   __sprite_ortho = th::game::currentGame().getOrtho();
+
+  glActiveTexture(GL_TEXTURE0);
     
   for(auto& i : __draw_sprites) {
     if(i->__is_drawing) {
@@ -84,12 +88,15 @@ void __draw_active_sprites() {
 				     glm::vec3(i->position.x, i->position.y, 0.f));
       __sprite_out *= glm::scale(glm::mat4(1),
 				 glm::vec3(i->size.x, i->size.y, 0.f));
+
+      glBindTexture(GL_TEXTURE_2D, i->__texture->name());
       
       if(i->textureIndependent) {
 	
       }
       
       glUniformMatrix4fv(__spr_shad_matid, 1, false, &__sprite_out[0][0]);
+      glUniform1i       (__spr_text_matid, 0);
       
       glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)0);
     }
@@ -98,6 +105,12 @@ void __draw_active_sprites() {
 
 void rn::sprite::drawSprites() {
   __draw_active_sprites();
+}
+
+const gl::texture& rn::sprite::texture() { return *__texture; }
+
+void rn::sprite::setTexture(const gl::texture& tex) {
+  __texture = &tex;
 }
 
 rn::sprite::sprite() { }
@@ -116,7 +129,7 @@ rn::sprite::sprite(const float2d&  p, const float2d&  s,
 
 void rn::sprite::create(const float2d& p, const float2d& s) {
   textureIndependent = false;
-
+  
   position = p;
   size     = s;
 }

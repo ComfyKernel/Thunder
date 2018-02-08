@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+const int2d& gl::texture::size() { return _size; }
+
 gl::texture::texture() { }
 
 void gl::texture::create() {
@@ -25,8 +27,14 @@ bool gl::texture::load(const std::string& file) {
     
     return false;
   }
+
+  _size.x = w;
+  _size.y = h;
   
   glBindTexture(GL_TEXTURE_2D, _name);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
 	       w, h, 0, GL_RGBA,

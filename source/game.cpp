@@ -11,11 +11,15 @@
 void dbg_gl_message_callback(__attribute__((unused)) GLenum  src,
 			     __attribute__((unused)) GLenum  type,
 			                             GLuint  id,
-			     __attribute__((unused)) GLenum  severity,
+			                             GLenum  severity,
 			     __attribute__((unused)) GLsizei length,
 			                       const GLchar* message,
 			     __attribute__((unused)) const void* userParam) {
   std::cout<<"[GL Info] [ID: "<<id<<"] "<<message<<"\n";
+
+  if(severity == GL_DEBUG_SEVERITY_HIGH) {
+    throw std::runtime_error(std::string("[GL Error] ")+message);
+  }
 }
 
 class th::game::_impl {

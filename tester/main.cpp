@@ -10,8 +10,8 @@ class testgame : public th::game {
 private:
   const std::string _name = "Test Game";
 
-  rn::sprite spr = rn::sprite(float2d(0.f  , 0.f),
-			      float2d(100.f, 100.f));
+  rn::sprite spr1 = rn::sprite(float2d(0.f  , 0.f),
+			       float2d(100.f, 100.f));
 
   rn::sprite spr2 = rn::sprite(float2d(0.f  , 0.f),
 			       float2d(100.f, 100.f));
@@ -32,7 +32,13 @@ public:
     glCreateVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
+    glActiveTexture(GL_TEXTURE0);
+
     tex.load("testimage.png");
+
+    spr1.setTexture(tex);
+    spr2.setTexture(tex);
+    spr3.setTexture(tex);
 
     std::cout<<"Finished Startup\n";
   }
@@ -52,8 +58,8 @@ public:
     spr2.position.x = (sin(time() / 800.0f) * 200.f) + ((win.size().x / 2) - 50);
     spr2.position.y = (cos(time() / 800.0f) * 200.f) + ((win.size().y / 2) - 50);
 
-    spr.position.x = (sin(time() / 400.f) * 200.f) + ((win.size().x / 2) - 50);
-    spr.position.y = (cos(time() / 400.f) * 200.f) + ((win.size().y / 2) - 50);
+    spr1.position.x = (sin(time() / 400.f) * 200.f) + ((win.size().x / 2) - 50);
+    spr1.position.y = (cos(time() / 400.f) * 200.f) + ((win.size().y / 2) - 50);
   }
 
   void onDrawStart(float delta) {
@@ -61,7 +67,7 @@ public:
   }
 
   void onDraw     (float delta) {
-    spr.draw ();
+    spr1.draw ();
     spr2.draw();
     spr3.draw();
 
