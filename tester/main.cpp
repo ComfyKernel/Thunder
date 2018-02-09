@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
+#include <vector>
+
 #include "../include/thunder.hpp"
 
 class testgame : public th::game {
@@ -19,6 +21,8 @@ private:
   rn::sprite spr3 = rn::sprite(float2d(0.f  , 0.f),
 			       float2d(100.f, 100.f));
 
+  std::vector<rn::sprite> sprites;
+  
   GLuint vao;
 
   gl::texture tex1;
@@ -42,6 +46,15 @@ public:
     spr2.setTexture(tex1);
     spr3.setTexture(tex2);
 
+    for(int i=0; i<10; ++i) {
+      for(int j=0; j<10; ++j) {
+	std::cout<<"Adding sprite : "<<i<<" : "<<j<<"\n";
+	sprites.push_back(rn::sprite(float2d(i*20.f, j*20.f),
+				     float2d(20.f  , 20.f)));
+	sprites[sprites.size() - 1].setTexture(tex2);
+      }
+    }
+    
     std::cout<<"Finished Startup\n";
   }
 
@@ -69,9 +82,13 @@ public:
   }
 
   void onDraw     (float delta) {
-    spr1.draw ();
+    spr1.draw();
     spr2.draw();
     spr3.draw();
+
+    for(auto& i : sprites) {
+      i.draw();
+    }
 
     rn::sprite::drawSprites();
   }
