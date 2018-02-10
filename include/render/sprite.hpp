@@ -32,7 +32,7 @@ namespace rn {
     sprite(const float2d& pos   , const float2d& size);
     sprite(const float2d& pos   , const float2d& size,
 	   const float2d& texpos, const float2d& texsize);
-
+    
     void create(const float2d&, const float2d&);
     void create(const float2d&, const float2d&,
 		const float2d&, const float2d&);

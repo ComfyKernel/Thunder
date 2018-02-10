@@ -21,7 +21,8 @@ private:
   rn::sprite spr3 = rn::sprite(float2d(0.f  , 0.f),
 			       float2d(100.f, 100.f));
 
-  std::vector<rn::sprite> sprites;
+  rn::sprite spr4 = rn::sprite(float2d(0.f  , 0.f),
+			       float2d(50.f, 50.f));
   
   GLuint vao;
 
@@ -45,15 +46,7 @@ public:
     spr1.setTexture(tex1);
     spr2.setTexture(tex1);
     spr3.setTexture(tex2);
-
-    for(int i=0; i<10; ++i) {
-      for(int j=0; j<10; ++j) {
-	std::cout<<"Adding sprite : "<<i<<" : "<<j<<"\n";
-	sprites.push_back(rn::sprite(float2d(i*20.f, j*20.f),
-				     float2d(20.f  , 20.f)));
-	sprites[sprites.size() - 1].setTexture(tex2);
-      }
-    }
+    spr4.setTexture(tex2);
     
     std::cout<<"Finished Startup\n";
   }
@@ -86,11 +79,17 @@ public:
     spr2.draw();
     spr3.draw();
 
-    for(auto& i : sprites) {
-      i.draw();
-    }
-
     rn::sprite::drawSprites();
+
+    for(int i=0; i<10; ++i) {
+      for(int j=0; j<10; ++j) {
+	spr4.position.x = float(i * 50.f);
+	spr4.position.y = float(j * 50.f);
+	spr4.draw();
+	
+	rn::sprite::drawSprites();
+      }
+    }
   }
 
   void onDrawEnd  (float delta) {
