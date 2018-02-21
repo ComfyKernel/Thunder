@@ -72,3 +72,9 @@ void rn::mesh::bind() {
 void rn::mesh::draw() {
   glDrawElements(GL_TRIANGLES, buffers.count, GL_UNSIGNED_INT, (void*)0);
 }
+
+rn::mesh::~mesh() {
+  buffers.vertex.destroy();
+  buffers.index.destroy();
+  buffers.uv.destroy();
+}
