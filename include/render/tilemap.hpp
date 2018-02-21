@@ -1,0 +1,6 @@
+#ifndef H_RENDER_TILEMAP_SINGLE_HPP
+#define H_RENDER_TILEMAP_SINGLE_HPP
+
+
+
+#endif

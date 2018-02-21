@@ -2,5 +2,6 @@
 #define H_RENDER_CONTAINER_HPP
 
 #include "render/sprite.hpp"
+#include "render/tilemap.hpp"
 
 #endif
