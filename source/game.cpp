@@ -40,6 +40,7 @@ public:
       return false;
     }
 
+    glewExperimental = GL_TRUE;
     if(glewInit() != GLEW_OK) {
       win.close();
       
