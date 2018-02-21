@@ -5,9 +5,10 @@ CC     = /usr/bin/g++
 
 CFLAGS = -std=c++17
 
-ORIGIN = .
-BUILD  = $(ORIGIN)/build
-SOURCE = $(ORIGIN)/source
+ORIGIN  = .
+BUILD   = $(ORIGIN)/build
+SOURCE  = $(ORIGIN)/source
+INCLUDE = $(ORIGIN)/include
 
 SOURCEFILES  = $(shell find $(SOURCE)/ -type f -name "*.cpp")
 OUTPUTFILES  = $(patsubst %.cpp, %.o, $(SOURCEFILES))
@@ -56,3 +57,7 @@ submodules:
 	git submodule init
 	git submodule update
 	git submodule status
+
+install:
+	cp -R $(INCLUDE) /usr/include/
+	cp $(BUILD)/$(BINARY) /usr/lib/$(BINARY)
