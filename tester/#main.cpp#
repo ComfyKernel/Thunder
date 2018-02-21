@@ -55,6 +55,8 @@ public:
       float3d( 1.0,-1.0, 0.0),
       float3d( 0.0, 1.0, 0.0)
     };
+
+    
     
     std::cout<<"Finished Startup\n";
   }
