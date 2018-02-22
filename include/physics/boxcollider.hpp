@@ -6,6 +6,8 @@ namespace ph {
   protected:
 
   public:
+    float2d size;
+    
     bool isColliding();
   }
 }
