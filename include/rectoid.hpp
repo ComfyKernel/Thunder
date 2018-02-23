@@ -10,7 +10,8 @@ public:
   float2d velocity;
 
   bool frozen = true;
-
+  bool bounce = false;
+  
   rectoid();
   rectoid(const float2d&, const float2d&);
 

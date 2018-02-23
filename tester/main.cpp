@@ -13,13 +13,13 @@ private:
   const std::string _name = "Test Game";
 
   rn::sprite floor = rn::sprite(float2d(0.f  , 0.f ),
-				float2d(300.f, 50.f));
+				float2d(1000.f, 50.f));
 
   rn::sprite thing = rn::sprite(float2d(200.f, 200.f),
 				float2d(50.f , 50.f));
 
   rectoid floor_col = rectoid(float2d(0.f  , 0.f ),
-			      float2d(300.f, 50.f));
+			      float2d(1000.f, 50.f));
   
   rectoid thing_col = rectoid(float2d(200.f, 200.f),
 			      float2d(50.f , 50.f ));
@@ -56,7 +56,8 @@ public:
 
     thing_col.frozen = false;
     
-    thing_col.velocity.y = -1.f;
+    thing_col.velocity = float2d(10.f, 10.f);
+    thing_col.bounce   = true;
 
     rectoidGravity(float2d(0.f, -1.f));
     

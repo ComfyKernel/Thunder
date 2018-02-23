@@ -1,6 +1,7 @@
 #include "../include/rectoid.hpp"
 
 #include <vector>
+#include <cmath>
 
 std::vector<rectoid*> rectoids;
 
@@ -15,9 +16,14 @@ void stepRectoid() {
 
       if(i->isColliding(c)) {
 	if(c->isHorizontal(i)) {
-	  i->velocity.y = 0;
 	  if(!i->frozen) {
+	    if(i->bounce && abs(i->velocity.y) > 5.f) {
+	      i->velocity.y = -i->velocity.y / 1.5;
+	    } else {
+	      i->velocity.y = 0;
+	    }
 	    i->position.y = c->position.y + c->size.y - 1.f;
+	    i->velocity.x /= 1.5;
 	  }
 	} else if(c->isVertical(i)) {
 	  i->velocity.x = 0;
