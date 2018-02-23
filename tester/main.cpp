@@ -18,12 +18,12 @@ private:
   rn::sprite thing = rn::sprite(float2d(200.f, 200.f),
 				float2d(50.f , 50.f));
 
-  ph::boxcollider floor_col = ph::boxcollider(float2d(0.f  , 0.f ),
-					      float2d(300.f, 50.f));
-
-  ph::boxcollider thing_col = ph::boxcollider(float2d(200.f, 200.f),
-					      float2d(50.f , 50.f ));
-
+  rectoid floor_col = rectoid(float2d(0.f  , 0.f ),
+			      float2d(300.f, 50.f));
+  
+  rectoid thing_col = rectoid(float2d(200.f, 200.f),
+			      float2d(50.f , 50.f ));
+  
   rn::mesh tmesh;
   
   GLuint vao;
@@ -56,7 +56,9 @@ public:
 
     thing_col.frozen = false;
     
-    ph::setGravity(float2d(0.f, -0.85f));
+    thing_col.velocity.y = -1.f;
+
+    rectoidGravity(float2d(0.f, -1.f));
     
     std::cout<<"Finished Startup\n";
   }
@@ -70,7 +72,7 @@ public:
   }
 
   void onUpdate   (float delta) {
-    ph::stepPhysics();
+    stepRectoid();
     
     floor.position = floor_col.position;
     thing.position = thing_col.position;
