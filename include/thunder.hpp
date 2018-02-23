@@ -6,6 +6,7 @@
 #include "game.hpp"
 #include "gl.hpp"
 #include "render.hpp"
+#include "physics.hpp"
 
 #include <string>
 

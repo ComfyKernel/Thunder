@@ -12,13 +12,13 @@ public:
   unit2d(const T& X,const T& Y) : x(X), y(Y) { }
   unit2d(const unit2d& p)       : x(p.x), y(p.y) { }
 
-  const unit2d& operator+(const unit2d& p) const { return unit2d<T>(x+p.x,y+p.y); }
-  const unit2d& operator-(const unit2d& p) const { return unit2d<T>(x-p.x,y-p.y); }
-  const unit2d& operator*(const unit2d& p) const { return unit2d<T>(x*p.x,y*p.y); }
-  const unit2d& operator/(const unit2d& p) const { return unit2d<T>(x/p.x,y/p.y); }
+  const unit2d operator+(const unit2d& p) const { return unit2d<T>(x+p.x,y+p.y); }
+  const unit2d operator-(const unit2d& p) const { return unit2d<T>(x-p.x,y-p.y); }
+  const unit2d operator*(const unit2d& p) const { return unit2d<T>(x*p.x,y*p.y); }
+  const unit2d operator/(const unit2d& p) const { return unit2d<T>(x/p.x,y/p.y); }
 
-  const unit2d& operator*(const T& v) const { return unit2d<T>(x*v,y*v); }
-  const unit2d& operator/(const T& v) const { return unit2d<T>(x/v,y/v); }
+  const unit2d operator*(const T& v) const { return unit2d<T>(x*v,y*v); }
+  const unit2d operator/(const T& v) const { return unit2d<T>(x/v,y/v); }
 
   unit2d& operator=(const unit2d& p) { x=p.x;y=p.y; return *this; }
   
@@ -61,13 +61,13 @@ public:
   unit3d(const unit3d& p)
     : x(p.x), y(p.y), z(p.z) { }
 
-  const unit3d& operator+(const unit3d& p) const { return unit3d<T>(x+p.x,y+p.y,z+p.z); }
-  const unit3d& operator-(const unit3d& p) const { return unit3d<T>(x-p.x,y-p.y,z-p.z); }
-  const unit3d& operator*(const unit3d& p) const { return unit3d<T>(x*p.x,y*p.y,z*p.z); }
-  const unit3d& operator/(const unit3d& p) const { return unit3d<T>(x/p.x,y/p.y,z/p.z); }
+  const unit3d operator+(const unit3d& p) const { return unit3d<T>(x+p.x,y+p.y,z+p.z); }
+  const unit3d operator-(const unit3d& p) const { return unit3d<T>(x-p.x,y-p.y,z-p.z); }
+  const unit3d operator*(const unit3d& p) const { return unit3d<T>(x*p.x,y*p.y,z*p.z); }
+  const unit3d operator/(const unit3d& p) const { return unit3d<T>(x/p.x,y/p.y,z/p.z); }
 
-  const unit3d& operator*(const T& v) const { return unit3d<T>(x*v,y*v,z*v); }
-  const unit3d& operator/(const T& v) const { return unit3d<T>(x/v,y/v,z/v); }
+  const unit3d operator*(const T& v) const { return unit3d<T>(x*v,y*v,z*v); }
+  const unit3d operator/(const T& v) const { return unit3d<T>(x/v,y/v,z/v); }
 
   unit3d& operator=(const unit3d& p) { x=p.x;y=p.y;z=p.z; return *this; }
   

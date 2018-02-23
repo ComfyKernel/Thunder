@@ -12,17 +12,17 @@ class testgame : public th::game {
 private:
   const std::string _name = "Test Game";
 
-  rn::sprite spr1 = rn::sprite(float2d(0.f  , 0.f),
-			       float2d(100.f, 100.f));
+  rn::sprite floor = rn::sprite(float2d(0.f  , 0.f ),
+				float2d(300.f, 50.f));
 
-  rn::sprite spr2 = rn::sprite(float2d(0.f  , 0.f),
-			       float2d(100.f, 100.f));
+  rn::sprite thing = rn::sprite(float2d(200.f, 200.f),
+				float2d(50.f , 50.f));
 
-  rn::sprite spr3 = rn::sprite(float2d(0.f  , 0.f),
-			       float2d(100.f, 100.f));
+  ph::boxcollider floor_col = ph::boxcollider(float2d(0.f  , 0.f ),
+					      float2d(300.f, 50.f));
 
-  rn::sprite spr4 = rn::sprite(float2d(0.f  , 0.f),
-			       float2d(50.f, 50.f));
+  ph::boxcollider thing_col = ph::boxcollider(float2d(200.f, 200.f),
+					      float2d(50.f , 50.f ));
 
   rn::mesh tmesh;
   
@@ -45,16 +45,18 @@ public:
     tex1.load("testimage.png");
     tex2.load("testimage2.png");
 
-    spr1.setTexture(tex1);
-    spr2.setTexture(tex1);
-    spr3.setTexture(tex2);
-    spr4.setTexture(tex2);
+    floor.setTexture(tex1);
+    thing.setTexture(tex2);
 
     float3d vertices[] = {
       float3d(-1.0,-1.0, 0.0),
       float3d( 1.0,-1.0, 0.0),
       float3d( 0.0, 1.0, 0.0)
     };
+
+    thing_col.frozen = false;
+    
+    ph::setGravity(float2d(0.f, -0.85f));
     
     std::cout<<"Finished Startup\n";
   }
@@ -68,14 +70,10 @@ public:
   }
 
   void onUpdate   (float delta) {
-    spr3.position.x = (sin(time() / 1600.0f) * 200.f) + ((win.size().x / 2) - 50);
-    spr3.position.y = (cos(time() / 1600.0f) * 200.f) + ((win.size().y / 2) - 50);
+    ph::stepPhysics();
     
-    spr2.position.x = (sin(time() / 800.0f) * 200.f) + ((win.size().x / 2) - 50);
-    spr2.position.y = (cos(time() / 800.0f) * 200.f) + ((win.size().y / 2) - 50);
-
-    spr1.position.x = (sin(time() / 400.f) * 200.f) + ((win.size().x / 2) - 50);
-    spr1.position.y = (cos(time() / 400.f) * 200.f) + ((win.size().y / 2) - 50);
+    floor.position = floor_col.position;
+    thing.position = thing_col.position;
   }
 
   void onDrawStart(float delta) {
@@ -83,10 +81,8 @@ public:
   }
 
   void onDraw     (float delta) {
-    spr1.draw();
-    spr2.draw();
-    spr3.draw();
-    spr4.draw();
+    floor.draw();
+    thing.draw();
 
     rn::sprite::drawSprites();
   }
