@@ -1,0 +1,7 @@
+[width]  : 132;
+[height] : 132;
+[foreground] : 'testmap_foreground.csv';
+[background] : 'testmap_background.csv';
+[collision]  : 'testmap_collision.csv';
+[logic]      : 'testmap_logic.csv';
+[path]       : 'testmap_path_test';
