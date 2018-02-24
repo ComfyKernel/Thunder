@@ -89,7 +89,7 @@ void __draw_active_sprites() {
       __sprite_out *= glm::scale(glm::mat4(1),
 				 glm::vec3(i->size.x, i->size.y, 0.f));
 
-      glBindTexture(GL_TEXTURE_2D, i->__texture->name());
+      glBindTexture(GL_TEXTURE_2D, i->__texture);
       
       if(i->textureIndependent) {
 	
@@ -107,35 +107,35 @@ void rn::sprite::drawSprites() {
   __draw_active_sprites();
 }
 
-const gl::texture& rn::sprite::texture() { return *__texture; }
+GLuint rn::sprite::texture() { return __texture; }
 
-void rn::sprite::setTexture(const gl::texture& tex) {
-  __texture = &tex;
+void rn::sprite::setTexture(GLuint tex) {
+  __texture = tex;
 }
 
 rn::sprite::sprite() { }
-rn::sprite::sprite(const float2d& p, const float2d& s) {
+rn::sprite::sprite(const int2d& p, const int2d& s) {
   __id = __add_sprite(this);
   
   create(p, s);
 }
 
-rn::sprite::sprite(const float2d&  p, const float2d&  s,
-		   const float2d& pt, const float2d& st) {
+rn::sprite::sprite(const int2d&  p, const int2d&  s,
+		   const int2d& pt, const int2d& st) {
   __id = __add_sprite(this);
   
   create(p, s, pt, st);
 }
 
-void rn::sprite::create(const float2d& p, const float2d& s) {
+void rn::sprite::create(const int2d& p, const int2d& s) {
   textureIndependent = false;
   
   position = p;
   size     = s;
 }
 
-void rn::sprite::create(const float2d&  p, const float2d&  s,
-			const float2d& pt, const float2d& st) {
+void rn::sprite::create(const int2d&  p, const int2d&  s,
+			const int2d& pt, const int2d& st) {
   textureIndependent = true;
 
   position = p;

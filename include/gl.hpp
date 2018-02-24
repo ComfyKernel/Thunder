@@ -6,5 +6,6 @@
 #include "gl/shader.hpp"
 #include "gl/program.hpp"
 #include "gl/texture.hpp"
+#include "gl/framebuffer.hpp"
 
 #endif

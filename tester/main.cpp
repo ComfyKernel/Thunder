@@ -12,19 +12,18 @@ class testgame : public th::game {
 private:
   const std::string _name = "Test Game";
 
-  rn::sprite floor = rn::sprite(float2d(0.f  , 0.f ),
-				float2d(1000.f, 50.f));
+  rn::sprite floor = rn::sprite(int2d(0 , 0 ),
+				int2d(128, 16));
 
-  rn::sprite thing = rn::sprite(float2d(200.f, 200.f),
-				float2d(50.f , 50.f));
+  rn::sprite thing = rn::sprite(int2d(16, 16),
+				int2d(16, 16));
 
-  rectoid floor_col = rectoid(float2d(0.f  , 0.f ),
-			      float2d(1000.f, 50.f));
-  
-  rectoid thing_col = rectoid(float2d(200.f, 200.f),
-			      float2d(50.f , 50.f ));
+  rn::sprite scr   = rn::sprite(int2d(0   , 0  ),
+				int2d(1280, 720));
   
   rn::mesh tmesh;
+
+  gl::framebuffer tfbo;
   
   GLuint vao;
 
@@ -48,18 +47,8 @@ public:
     floor.setTexture(tex1);
     thing.setTexture(tex2);
 
-    float3d vertices[] = {
-      float3d(-1.0,-1.0, 0.0),
-      float3d( 1.0,-1.0, 0.0),
-      float3d( 0.0, 1.0, 0.0)
-    };
-
-    thing_col.frozen = false;
-    
-    thing_col.velocity = float2d(10.f, 10.f);
-    thing_col.bounce   = true;
-
-    rectoidGravity(float2d(0.f, -1.f));
+    tfbo.create(uint2d(1280 / 4, 720 / 4));
+    scr.setTexture(tfbo.texture());
     
     std::cout<<"Finished Startup\n";
   }
@@ -73,10 +62,7 @@ public:
   }
 
   void onUpdate   (float delta) {
-    stepRectoid();
     
-    floor.position = floor_col.position;
-    thing.position = thing_col.position;
   }
 
   void onDrawStart(float delta) {
@@ -84,8 +70,16 @@ public:
   }
 
   void onDraw     (float delta) {
+    tfbo.bind();
+    
     floor.draw();
     thing.draw();
+
+    rn::sprite::drawSprites();
+
+    gl::framebuffer::clear();
+
+    scr.draw();
 
     rn::sprite::drawSprites();
   }

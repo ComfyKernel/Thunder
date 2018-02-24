@@ -11,31 +11,31 @@ namespace rn {
     unsigned int __id;
 
   public:
-    const gl::texture* __texture;
-    bool               __is_drawing = false;
+    GLuint __texture;
+    bool   __is_drawing = false;
     
     static void drawSprites();
 
-    float2d position;
-    float2d size;
+    int2d position;
+    int2d size;
     
-    float2d texposition;
-    float2d texsize;
+    int2d texposition;
+    int2d texsize;
 
-    const gl::texture& texture();
+    GLuint texture();
 
-    void setTexture(const gl::texture&);
+    void setTexture(GLuint);
 
     bool textureIndependent = false;
 
     sprite();
-    sprite(const float2d& pos   , const float2d& size);
-    sprite(const float2d& pos   , const float2d& size,
-	   const float2d& texpos, const float2d& texsize);
+    sprite(const int2d& pos   , const int2d& size);
+    sprite(const int2d& pos   , const int2d& size,
+	   const int2d& texpos, const int2d& texsize);
     
-    void create(const float2d&, const float2d&);
-    void create(const float2d&, const float2d&,
-		const float2d&, const float2d&);
+    void create(const int2d&, const int2d&);
+    void create(const int2d&, const int2d&,
+		const int2d&, const int2d&);
     
     void draw();
 
