@@ -64,3 +64,4 @@ submodules:
 install:
 	cp -R $(INCLUDE) /usr/include/
 	cp $(BUILD)/$(BINARY) /usr/lib/$(BINARY)
+	cp $(BUILD)/csv2map   /usr/bin/csv2map
