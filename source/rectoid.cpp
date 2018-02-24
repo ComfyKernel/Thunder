@@ -17,13 +17,17 @@ void stepRectoid() {
       if(i->isColliding(c)) {
 	if(c->isHorizontal(i)) {
 	  if(!i->frozen) {
-	    if(i->bounce && abs(i->velocity.y) > 5.f) {
-	      i->velocity.y = -i->velocity.y / 1.5;
+	    if(i->bounce && abs(i->velocity.y) > 2.f) {
+	      // i->velocity.y = -i->velocity.y / 1.5;
 	    } else {
 	      i->velocity.y = 0;
 	    }
-	    i->position.y = c->position.y + c->size.y - 1.f;
-	    i->velocity.x /= 1.5;
+	    if(i->position.y > c->position.y) {
+	      i->position.y = c->position.y + c->size.y - 1.f;
+	    } else {
+	      i->position.y = c->position.y - i->size.y;
+	    }
+	    i->velocity.x /= 1.15;
 	  }
 	} else if(c->isVertical(i)) {
 	  i->velocity.x = 0;
