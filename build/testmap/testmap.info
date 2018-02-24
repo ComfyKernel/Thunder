@@ -1,10 +1,10 @@
 (uint)
-[width]  : 132;
-[height] : 132;
+[width]  132
+[height] 132
 
 (list)
-[layer] : 'testmap_foreground.csv';
-[layer] : 'testmap_background.csv';
-[layer] : 'testmap_collision.csv';
-[layer] : 'testmap_logic.csv';
-[layer] : 'testmap_path_test.csv';
+[layer] 'testmap_foreground.csv'
+[layer] 'testmap_background.csv'
+[layer] 'testmap_collision.csv'
+[layer] 'testmap_logic.csv'
+[layer] 'testmap_path_test.csv'
