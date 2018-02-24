@@ -32,6 +32,16 @@ public:
   std::string filename;
 
   layertype ltype;
+
+  std::vector<unsigned short> data;
+};
+
+struct map {
+public:
+  unsigned int width;
+  unsigned int height;
+
+  std::vector<layer> layers;
 };
 
 int main(int argc, char *argv[]) {
@@ -47,7 +57,7 @@ int main(int argc, char *argv[]) {
   unsigned int width  = 0;
   unsigned int height = 0;
 
-  std::vector<layer> layers;
+  map m;
   
   inforeader ir;
   if(ir.open(argv[1])) {
@@ -56,6 +66,10 @@ int main(int argc, char *argv[]) {
     std::cout<<"Getting map size.\n";
     width  = ir.getValue<unsigned int>("width" );
     height = ir.getValue<unsigned int>("height");
+    std::cout<<"Map size ( W: "<<width<<" H: "<<height<<" )\n";
+
+    m.width  = width;
+    m.height = height;
 
     std::cout<<"Getting layers.\n";
     for(const auto& i : ir.getValue<std::vector<std::string>>("layer")) {
@@ -71,9 +85,48 @@ int main(int argc, char *argv[]) {
 	  break;
 	}
       }
+
+      m.layers.push_back(l);
     }
   } else {
     std::cout<<"Failed to open info file '"<<argv[1]<<"'!\n";
     exit(1);
+  }
+
+  for(auto& l : m.layers) {
+    std::ifstream lay(l.filename);
+
+    if(lay.is_open()) {
+      std::cout<<"Opening layer file '"<<l.filename<<"'\n";
+
+      std::string num = "";
+      
+      char c = '\0';
+      while(lay.get(c)) {
+	switch(c) {
+	case '\n':
+	case ',': {
+	  long dat = std::stol(num, nullptr, 0);
+	  
+	  if(dat < 0) dat = 0;
+	  
+	  l.data.push_back(dat);
+	  
+	  num = "";
+	  break;
+	}
+	default:
+	  num += c;
+	  break;
+	}
+      }
+
+      std::cout<<"Layer size : "<<l.data.size()<<"\n";
+    } else {
+      std::cout<<"Failed to open layer file '"<<l.filename<<"'!\n";
+      exit(2);
+    }
+
+    lay.close();
   }
 }

@@ -105,7 +105,7 @@ bool inforeader::open(const std::string& filename) {
 	  ((std::vector<std::string>*)_element_values[_element_values.size() - 1])->push_back(value);
 	}
       } else {
-	std::cout<<"Unknown type for element '"<<name<<"' Defaulting to string\n";
+	std::cout<<"[inforeader] Unknown type for element '"<<name<<"' Defaulting to string\n";
 
 	_element_names.push_back (name);
 	_element_values.push_back(new std::string(val));
@@ -127,12 +127,12 @@ bool inforeader::open(const std::string& filename) {
 void* inforeader::_getValue(const std::string& name) {
   for(size_t i=0; i < _element_names.size(); ++i) {
     if(_element_names[i] == name) {
-      std::cout<<"Value found : '"<<name<<"'\n";
+      std::cout<<"[inforeader] Value found : '"<<name<<"'\n";
       return _element_values[i];
     }
   }
 
-  std::cout<<"Value not found! '"<<name<<"'\n";
+  std::cout<<"[inforeader] Value not found! '"<<name<<"'\n";
 
   throw std::runtime_error("[inforeader] Unable to return a NULL value (possible segfault)\n");
 }
