@@ -53,6 +53,9 @@ runtest:
 check:
 	ar -t $(BUILD)/$(BINARY)
 
+csv:
+	g++ $(wildcard $(ORIGIN)/csvconvert/*.cpp) -std=c++17 -o $(BUILD)/csv2map
+
 submodules:
 	git submodule init
 	git submodule update
