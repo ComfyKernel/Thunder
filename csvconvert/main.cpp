@@ -7,6 +7,9 @@
 #include <string>
 #include <utility>
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 enum layertype {
   LT_FOREGROUND,
   LT_BACKGROUND,
@@ -33,7 +36,98 @@ public:
 
   layertype ltype;
 
+  bool special;
+  
   std::vector<unsigned short> data;
+
+  std::vector<float>        m_vertices;
+  std::vector<unsigned int> m_indices;
+  std::vector<float>        m_uvs;
+
+  void getBin(std::vector<char>& vec) {
+    auto writeNum = [&](uint32_t n) {
+      vec.push_back(*( (char*)(&n)));
+      vec.push_back(*(((char*)(&n)) + 1));
+      vec.push_back(*(((char*)(&n)) + 2));
+      vec.push_back(*(((char*)(&n)) + 3));
+    };
+
+    writeNum((8 * 4));
+    writeNum(data.size() * sizeof(unsigned short));
+    
+    writeNum((8 * 4) + (data.size() * sizeof(unsigned short)));
+    writeNum(m_vertices.size() * sizeof(float));
+
+    writeNum((8 * 4) + (data.size() * sizeof(unsigned short))
+	     + (m_vertices.size() * sizeof(float)));
+    writeNum(m_indices.size() * sizeof(unsigned int));
+
+    writeNum((8 * 4) + (data.size() * sizeof(unsigned short))
+	     + (m_vertices.size() * sizeof(float))
+	     + (m_indices.size() * sizeof(unsigned int)));
+    writeNum(m_uvs.size() * sizeof(float));
+
+    for(unsigned int i = 0; i < data.size() * sizeof(unsigned short); ++i) {
+      vec.push_back(*(((char*)(&data[0])) + i));
+    }
+
+    for(unsigned int i = 0; i < m_vertices.size() * sizeof(float); ++i) {
+      vec.push_back(*(((char*)(&m_vertices[0])) + i));
+    }
+
+    for(unsigned int i = 0; i < m_indices.size() * sizeof(unsigned int); ++i) {
+      vec.push_back(*(((char*)(&m_indices[0])) + i));
+    }
+
+    for(unsigned int i = 0; i < m_uvs.size() * sizeof(float); ++i) {
+      vec.push_back(*(((char*)(&m_uvs[0])) + i));
+    }
+  }
+};
+
+struct entity {
+public:
+  unsigned int x;
+  unsigned int y;
+
+  unsigned int id;
+  
+  void getBin(std::vector<char>& vec) {
+    auto writeNum = [&](uint32_t n) {
+      vec.push_back(*( (char*)(&n)));
+      vec.push_back(*(((char*)(&n)) + 1));
+      vec.push_back(*(((char*)(&n)) + 2));
+      vec.push_back(*(((char*)(&n)) + 3));
+    };
+
+    writeNum(x);
+    writeNum(y);
+    writeNum(id);
+  }
+};
+
+struct roomtrigger {
+public:
+  unsigned int x;
+  unsigned int y;
+
+  unsigned int id;
+
+  unsigned int nextroom;
+
+  void getBin(std::vector<char>& vec) {
+    auto writeNum = [&](uint32_t n) {
+      vec.push_back(*( (char*)(&n)));
+      vec.push_back(*(((char*)(&n)) + 1));
+      vec.push_back(*(((char*)(&n)) + 2));
+      vec.push_back(*(((char*)(&n)) + 3));
+    };
+
+    writeNum(x);
+    writeNum(y);
+    writeNum(id);
+    writeNum(nextroom);
+  }
 };
 
 struct map {
@@ -41,14 +135,70 @@ public:
   unsigned int width;
   unsigned int height;
 
-  std::vector<layer> layers;
+  std::vector<layer>       layers;
+  std::vector<entity>      entities;
+  std::vector<roomtrigger> roomtriggers;
+
+  void getBin(std::vector<char>& vec) {
+    auto writeNum = [&](uint32_t n) {
+      vec.push_back(*( (char*)(&n)));
+      vec.push_back(*(((char*)(&n)) + 1));
+      vec.push_back(*(((char*)(&n)) + 2));
+      vec.push_back(*(((char*)(&n)) + 3));
+    };
+
+    writeNum(width);
+    writeNum(height);
+    
+    unsigned int csize = vec.size();
+
+    for(int i=0; i<layers.size(); ++i) {
+      if(!layers[i].special) {
+	layers[i].getBin(vec);
+      }
+    }
+    
+    unsigned int nsize = vec.size();
+
+    unsigned int l_off  = 8;
+    unsigned int l_size = (nsize - csize);
+
+    csize = vec.size();
+
+    for(int i=0; i<entities.size(); ++i) {
+      entities[i].getBin(vec);
+    }
+
+    nsize = vec.size();
+
+    unsigned int e_off  = (l_off + l_size);
+    unsigned int e_size = (nsize - csize);
+
+    csize = vec.size();
+
+    for(int i=0; i<roomtriggers.size(); ++i) {
+      roomtriggers[i].getBin(vec);
+    }
+
+    nsize = vec.size();
+
+    unsigned int r_off  = (e_off + e_size);
+    unsigned int r_size = (nsize - csize);
+
+    writeNum(l_off);
+    writeNum(l_size);
+    writeNum(e_off);
+    writeNum(e_size);
+    writeNum(r_off);
+    writeNum(r_size);
+  }
 };
 
 int main(int argc, char *argv[]) {
   std::cout<<"Starting CSV2Map\n";
 
-  if(argc<2) {
-    std::cout<<"No map file provided!\n";
+  if(argc<3) {
+    std::cout<<"No map file provided / No output file provided!\n";
     exit(-1);
   }
 
@@ -101,16 +251,18 @@ int main(int argc, char *argv[]) {
 
       std::string num = "";
       
+      std::vector<unsigned short> ldat;
+      
       char c = '\0';
       while(lay.get(c)) {
-	switch(c) {
+        switch(c) {
 	case '\n':
 	case ',': {
 	  long dat = std::stol(num, nullptr, 0);
 	  
 	  if(dat < 0) dat = 0;
 	  
-	  l.data.push_back(dat);
+	  ldat.push_back(dat);
 	  
 	  num = "";
 	  break;
@@ -121,12 +273,135 @@ int main(int argc, char *argv[]) {
 	}
       }
 
+      switch(l.ltype) {
+      case LT_BACKGROUND:
+      case LT_FOREGROUND:
+	l.data = ldat;
+
+	std::cout<<"Generating mesh...\n";
+
+	for(unsigned int x = 0; x < m.width; ++x) {
+	  for(unsigned int y = 0; y < m.height; ++y) {
+	    if(l.data[x + (y * m.width)] != 0) {
+	      unsigned int index = l.m_vertices.size() / 2;
+
+	      // Vertices //
+
+	      l.m_vertices.push_back(x * 16);
+	      l.m_vertices.push_back(y * 16);
+
+	      l.m_vertices.push_back((x + 1) * 16);
+	      l.m_vertices.push_back(y * 16);
+
+	      l.m_vertices.push_back((x + 1) * 16);
+	      l.m_vertices.push_back((y + 1) * 16);
+
+	      l.m_vertices.push_back((x) * 16);
+	      l.m_vertices.push_back((y + 1) * 16);
+
+	      // Indices //
+	      
+	      l.m_indices.push_back(index);
+	      l.m_indices.push_back(index + 1);
+	      l.m_indices.push_back(index + 2);
+
+	      l.m_indices.push_back(index + 2);
+	      l.m_indices.push_back(index + 3);
+	      l.m_indices.push_back(index);
+
+	      // UVs //
+
+	      unsigned int dat = l.data[x + (y * m.width)];
+
+	      float uv_s = (1.f / 32.f);
+	      float uv_x = uv_s * (dat % 32);
+	      float uv_y = uv_s * (dat / 32);
+
+	      l.m_uvs.push_back(uv_x);
+	      l.m_uvs.push_back(uv_y);
+
+	      l.m_uvs.push_back(uv_x + uv_s);
+	      l.m_uvs.push_back(uv_y);
+
+	      l.m_uvs.push_back(uv_x + uv_s);
+	      l.m_uvs.push_back(uv_y + uv_s);
+
+	      l.m_uvs.push_back(uv_x);
+	      l.m_uvs.push_back(uv_y + uv_s);
+	    }
+	  }
+	}
+	break;
+      case LT_LOGIC: {
+	for(unsigned int i=0; i<ldat.size(); ++i) {
+	  if(ldat[i] == 0) continue;
+
+	  /*e.x = (i % m.width) * 16;
+	  e.y = (i / m.width) * 16;
+	  
+	  e.id = 1024 - ldat[i];
+
+	  std::cout<<"Adding entity '"<<e.id<<"' ( X: "<<e.x<<" Y: "<<e.y<<" )\n";
+	  
+	  m.entities.push_back(e);*/
+
+	  unsigned int state = 0;
+	  
+	  switch(ldat[i]) {
+	  case 1023:
+	    state = 1;
+	  case 1019:
+	    entity e;
+
+	    e.x = (i % m.width ) * 16;
+	    e.y = (m.height - (i / m.height)) * 16;
+
+	    if(state == 0) {
+	      e.id = 0; // TODO //
+	    } else {
+	      e.id = 1;
+	    }
+	    
+	    std::cout<<"Adding entity '"<<e.id<<"' ( X: "<<e.x<<" Y: "<<e.y<<" )\n";
+	  
+	    m.entities.push_back(e);
+	    break;
+	  case 1022:
+	    roomtrigger rt;
+
+	    rt.x = (i % m.width ) * 16;
+	    rt.y = (m.height - (i / m.height)) * 16;
+
+	    std::cout<<"Adding roomtrigger ( X: "<<rt.x<<" Y: "<<rt.y<<" )\n";
+
+	    m.roomtriggers.push_back(rt);
+	    break;
+	  }
+	}
+	break;
+      }
+      default:
+	std::cout<<"Unhandled layer type!\n";
+	break;
+      }
+
       std::cout<<"Layer size : "<<l.data.size()<<"\n";
     } else {
       std::cout<<"Failed to open layer file '"<<l.filename<<"'!\n";
       exit(2);
     }
 
+    std::cout<<"Writing to file '"<<argv[2]<<"'\n";
+    
+    std::ofstream ofile(argv[2], std::ios::out | std::ofstream::binary);
+
+    std::vector<char> binDat;
+    m.getBin(binDat);
+
+    ofile.write(&binDat[0], binDat.size());
+
+    ofile.close();
+    
     lay.close();
   }
 }
