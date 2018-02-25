@@ -42,6 +42,11 @@ private:
   gl::texture mapset;
 
   map tmap;
+
+  GLuint mp_tex;
+  GLuint mp_mat;
+
+  glm::mat4 mapmat;
   
 public:
   const std::string& name() const { return _name; }
@@ -66,6 +71,9 @@ public:
     scr.setTexture(tfbo.texture());
 
     tmap.load("testmap/testmap.cmf");
+
+    mp_tex = glGetUniformLocation(getSpriteShader(), "TEX");
+    mp_mat = glGetUniformLocation(getSpriteShader(), "PVM");
 
     rectoidGravity(float2d(0.f, -0.1f));
     
@@ -119,6 +127,11 @@ public:
 
     glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[0].ubuff);
     glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, (void*)0);
+
+    mapmat = getOrtho();
+    
+    glUniform1i       (mp_tex, 0);
+    glUniformMatrix4fv(mp_mat, 1, false, &mapmat[0][0]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tmap.layers[0].ibuff);
     glDrawElements(GL_TRIANGLES, tmap.layers[0].icount, GL_UNSIGNED_INT, (void*)0);

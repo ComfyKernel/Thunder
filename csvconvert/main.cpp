@@ -315,7 +315,7 @@ int main(int argc, char *argv[]) {
 
 	      float uv_s = (1.f / 32.f);
 	      float uv_x = uv_s * (dat % 32);
-	      float uv_y = uv_s * (dat / 32);
+	      float uv_y = 1.f - (uv_s * (dat / 32));
 
 	      l.m_uvs.push_back(uv_x);
 	      l.m_uvs.push_back(uv_y);
