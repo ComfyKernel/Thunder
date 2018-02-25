@@ -6,6 +6,10 @@
 
 #include <vector>
 
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "../include/thunder.hpp"
 
 class testgame : public th::game {
@@ -94,11 +98,33 @@ public:
     std::cout<<"Exiting\n";
   }
 
+  uint2d campos = uint2d(0, 0);
+
+  bool cm_up    = false;
+  bool cm_down  = false;
+  bool cm_right = false;
+  bool cm_left  = false;
+
   void onUpdate   (float delta) {
     stepRectoid();
 
     thing.position  = int2d(thing_col.position.x, thing_col.position.y);
     thing2.position = int2d(thing2_col.position.x, thing2_col.position.y);
+
+    if(cm_up) {
+      campos.y += (200 * delta);
+    }
+    if(cm_down) {
+      campos.y -= (200 * delta);
+    }
+    if(cm_left) {
+      campos.x -= (200 * delta);
+    }
+    if(cm_right) {
+      campos.x += (200 * delta);
+    }
+    
+    camera = glm::translate(glm::mat4(1.f), glm::vec3(-(float)campos.x, -(float)campos.y, 0.f));
   }
 
   void onDrawStart(float delta) {
@@ -106,7 +132,40 @@ public:
   }
 
   void onEventPoll(SDL_Event& event) {
-
+    switch(event.type) {
+    case SDL_KEYDOWN:
+      switch(event.key.keysym.sym) {
+      case SDLK_w:
+	cm_up    = true;
+	break;
+      case SDLK_s:
+	cm_down  = true;
+	break;
+      case SDLK_a:
+	cm_left  = true;
+	break;
+      case SDLK_d:
+	cm_right = true;
+	break;
+      }
+      break;
+    case SDL_KEYUP:
+      switch(event.key.keysym.sym) {
+      case SDLK_w:
+	cm_up    = false;
+	break;
+      case SDLK_s:
+	cm_down  = false;
+	break;
+      case SDLK_a:
+	cm_left  = false;
+	break;
+      case SDLK_d:
+	cm_right = false;
+	break;
+      }
+      break;
+    }
   }
 
   void onDraw     (float delta) {
@@ -132,7 +191,7 @@ public:
     glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[0].ubuff);
     glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, (void*)0);
 
-    mapmat = getOrtho();
+    mapmat = getOrtho() * camera;
     
     glUniform1i       (mp_tex, 0);
     glUniformMatrix4fv(mp_mat, 1, false, &mapmat[0][0]);
