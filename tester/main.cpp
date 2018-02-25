@@ -108,6 +108,24 @@ public:
 
     rn::sprite::drawSprites();
 
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture  (GL_TEXTURE_2D, mapset);
+
+    glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[0].vbuff);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void*)0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[0].ubuff);
+    glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, (void*)0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tmap.layers[0].ibuff);
+    glDrawElements(GL_TRIANGLES, tmap.layers[0].icount, GL_UNSIGNED_INT, (void*)0);
+    
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+
     gl::framebuffer::clear();
 
     scr.draw();

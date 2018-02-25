@@ -8,15 +8,11 @@
 
 struct layer {
 public:
-  unsigned short* data;
-
-  float*        vertices;
-  unsigned int* indices;
-  float*        uvs;
-
   gl::buffer vbuff;
   gl::buffer ibuff;
   gl::buffer ubuff;
+
+  unsigned int icount;
 };
 
 class map {

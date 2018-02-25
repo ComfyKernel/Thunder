@@ -45,7 +45,7 @@ bool map::load(const std::string& file) {
   width  = getNum(0);
   height = getNum(4);
 
-  std::cout<<"Map size : W: "<<width<<" H: "<<height<<"\n";
+  std::cout<<"Map size [Header] : W: "<<width<<" H: "<<height<<"\n";
 
   layer l;
 
@@ -68,7 +68,8 @@ bool map::load(const std::string& file) {
 	   <<"Entity offset : "<<f_map.e_off <<"\n"
 	   <<"Entity size   : "<<f_map.e_size<<"\n"
 	   <<"RoomTrigger offset : "<<f_map.r_off <<"\n"
-	   <<"RoomTrigger size   : "<<f_map.r_size<<"\n";
+	   <<"RoomTrigger size   : "<<f_map.r_size<<"\n"
+	   <<"--------------------------\n";
   
   struct {
     uint32_t l_dat_off;
@@ -94,10 +95,36 @@ bool map::load(const std::string& file) {
 	   <<"Indice offset : "<<h_layer.l_ind_off <<"\n"
 	   <<"Indice size   : "<<h_layer.l_ind_size<<"\n"
 	   <<"UV offset : "<<h_layer.l_uvs_off <<"\n"
-	   <<"UV size   : "<<h_layer.l_uvs_size<<"\n";
+	   <<"UV size   : "<<h_layer.l_uvs_size<<"\n"
+	   <<"--------------------------\n";
 
   std::vector<float> vertices(h_layer.l_ver_size / sizeof(float));
   memcpy(&vertices[0], &dat[h_layer.l_ver_off + f_map.l_off], h_layer.l_ver_size);
+
+  std::vector<uint32_t> indices(h_layer.l_ind_size / sizeof(uint32_t));
+  memcpy(&indices[0], &dat[h_layer.l_ind_off + f_map.l_off], h_layer.l_ind_size);
+
+  std::vector<float> uvs(h_layer.l_uvs_size / sizeof(float));
+  memcpy(&uvs[0], &dat[h_layer.l_uvs_off + f_map.l_off], h_layer.l_uvs_size);
+
+  std::cout<<"[Mesh Info]\n"
+	   <<"Vertex size : "<<vertices.size()<<"\n"
+	   <<"Index size  : "<<indices.size() <<"\n"
+	   <<"UV size     : "<<uvs.size()     <<"\n"
+	   <<"--------------------------\n";
+
+  std::cout<<"Generating map buffers\n";
+  
+  l.vbuff.create(&vertices[0], vertices.size() * sizeof(float),
+		 GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+  l.ibuff.create(&indices[0], indices.size() * sizeof(uint32_t),
+		 GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+  l.ubuff.create(&uvs[0], uvs.size() * sizeof(float),
+		 GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+  l.icount = indices.size();
+
+  std::cout<<"Pushing layer\n";
   
   layers.push_back(l);
 

@@ -14,6 +14,7 @@ bool __sprite_draw_initialized = false;
 
 gl::buffer __sprite_vertices;
 gl::buffer __sprite_indices ;
+gl::buffer __sprite_uvs     ;
   
 std::vector<rn::sprite*> __draw_sprites;
   
@@ -44,21 +45,30 @@ void __draw_active_sprites() {
     std::cout<<"[SPRITE] Creating sprite buffers\n";
       
     float verts[] =  {
-      0.f, 0.f, 0.f,
-      1.f, 0.f, 0.f,
-      1.f, 1.f, 0.f,
-      0.f, 1.f, 0.f
+      0.f, 0.f,
+      1.f, 0.f,
+      1.f, 1.f,
+      0.f, 1.f
+    };
+
+    float uvs[] = {
+      0.f, 0.f,
+      1.f, 0.f,
+      1.f, 1.f,
+      0.f, 1.f
     };
       
     unsigned short indis[] = {
       0, 1, 2, 2, 3, 4
     };
       
-    __sprite_vertices.create(verts, 12*sizeof(float         ),
+    __sprite_vertices.create(verts, 8*sizeof(float         ),
 			     GL_ARRAY_BUFFER        , GL_STATIC_DRAW);
-    __sprite_indices.create (indis,  6*sizeof(unsigned short),
+    __sprite_indices.create (indis, 6*sizeof(unsigned short),
 			     GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
-      
+    __sprite_uvs.create     (uvs  , 8*sizeof(float         ),
+			     GL_ARRAY_BUFFER        , GL_STATIC_DRAW);
+    
     __spr_shad_matid = glGetUniformLocation(th::game::currentGame().getSpriteShader(), "PVM");
     __spr_text_matid = glGetUniformLocation(th::game::currentGame().getSpriteShader(), "TEX");
       
@@ -68,11 +78,15 @@ void __draw_active_sprites() {
   glUseProgram(th::game::currentGame().getSpriteShader());
     
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
     
   glBindBuffer         (GL_ARRAY_BUFFER        , __sprite_vertices);
+  glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void*)0);
+
+  glBindBuffer         (GL_ARRAY_BUFFER        , __sprite_uvs);
+  glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, (void*)0);
+  
   glBindBuffer         (GL_ELEMENT_ARRAY_BUFFER, __sprite_indices );
-    
-  glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void*)0);
     
   __sprite_ortho = th::game::currentGame().getOrtho();
 
