@@ -39,6 +39,7 @@ private:
 
   gl::texture tex1;
   gl::texture tex2;
+  gl::texture mapset;
 
   map tmap;
   
@@ -55,7 +56,8 @@ public:
 
     tex1.load("testimage.png");
     tex2.load("testimage2.png");
-
+    mapset.load("test-tileset.png");
+    
     floor.setTexture(tex1);
     thing.setTexture(tex2);
     thing2.setTexture(tex2);

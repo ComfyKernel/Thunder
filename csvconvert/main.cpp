@@ -38,11 +38,11 @@ public:
 
   bool special;
   
-  std::vector<unsigned short> data;
+  std::vector<uint16_t> data;
 
-  std::vector<float>        m_vertices;
-  std::vector<unsigned int> m_indices;
-  std::vector<float>        m_uvs;
+  std::vector<float>    m_vertices;
+  std::vector<uint32_t> m_indices;
+  std::vector<float>    m_uvs;
 
   void getBin(std::vector<char>& vec) {
     auto writeNum = [&](uint32_t n) {
@@ -53,21 +53,21 @@ public:
     };
 
     writeNum((8 * 4));
-    writeNum(data.size() * sizeof(unsigned short));
+    writeNum(data.size() * sizeof(uint16_t));
     
-    writeNum((8 * 4) + (data.size() * sizeof(unsigned short)));
+    writeNum((8 * 4) + (data.size() * sizeof(uint16_t)));
     writeNum(m_vertices.size() * sizeof(float));
 
-    writeNum((8 * 4) + (data.size() * sizeof(unsigned short))
+    writeNum((8 * 4) + (data.size() * sizeof(uint16_t))
 	     + (m_vertices.size() * sizeof(float)));
-    writeNum(m_indices.size() * sizeof(unsigned int));
+    writeNum(m_indices.size() * sizeof(uint32_t));
 
-    writeNum((8 * 4) + (data.size() * sizeof(unsigned short))
+    writeNum((8 * 4) + (data.size() * sizeof(uint16_t))
 	     + (m_vertices.size() * sizeof(float))
-	     + (m_indices.size() * sizeof(unsigned int)));
+	     + (m_indices.size() * sizeof(uint32_t)));
     writeNum(m_uvs.size() * sizeof(float));
 
-    for(unsigned int i = 0; i < data.size() * sizeof(unsigned short); ++i) {
+    for(unsigned int i = 0; i < data.size() * sizeof(uint16_t); ++i) {
       vec.push_back(*(((char*)(&data[0])) + i));
     }
 
@@ -75,7 +75,7 @@ public:
       vec.push_back(*(((char*)(&m_vertices[0])) + i));
     }
 
-    for(unsigned int i = 0; i < m_indices.size() * sizeof(unsigned int); ++i) {
+    for(unsigned int i = 0; i < m_indices.size() * sizeof(uint32_t); ++i) {
       vec.push_back(*(((char*)(&m_indices[0])) + i));
     }
 
@@ -87,10 +87,10 @@ public:
 
 struct entity {
 public:
-  unsigned int x;
-  unsigned int y;
+  uint32_t x;
+  uint32_t y;
 
-  unsigned int id;
+  uint32_t id;
   
   void getBin(std::vector<char>& vec) {
     auto writeNum = [&](uint32_t n) {
@@ -108,12 +108,12 @@ public:
 
 struct roomtrigger {
 public:
-  unsigned int x;
-  unsigned int y;
+  uint32_t x;
+  uint32_t y;
 
-  unsigned int id;
+  uint32_t id;
 
-  unsigned int nextroom;
+  uint32_t nextroom;
 
   void getBin(std::vector<char>& vec) {
     auto writeNum = [&](uint32_t n) {
@@ -132,8 +132,8 @@ public:
 
 struct map {
 public:
-  unsigned int width;
-  unsigned int height;
+  uint32_t width;
+  uint32_t height;
 
   std::vector<layer>       layers;
   std::vector<entity>      entities;
@@ -150,7 +150,7 @@ public:
     writeNum(width);
     writeNum(height);
     
-    unsigned int csize = vec.size();
+    uint32_t csize = vec.size();
 
     for(int i=0; i<layers.size(); ++i) {
       if(!layers[i].special) {
@@ -158,10 +158,10 @@ public:
       }
     }
     
-    unsigned int nsize = vec.size();
+    uint32_t nsize = vec.size();
 
-    unsigned int l_off  = 8;
-    unsigned int l_size = (nsize - csize);
+    uint32_t l_off  = 8;
+    uint32_t l_size = (nsize - csize);
 
     csize = vec.size();
 
@@ -171,8 +171,8 @@ public:
 
     nsize = vec.size();
 
-    unsigned int e_off  = (l_off + l_size);
-    unsigned int e_size = (nsize - csize);
+    uint32_t e_off  = (l_off + l_size);
+    uint32_t e_size = (nsize - csize);
 
     csize = vec.size();
 
@@ -182,8 +182,8 @@ public:
 
     nsize = vec.size();
 
-    unsigned int r_off  = (e_off + e_size);
-    unsigned int r_size = (nsize - csize);
+    uint32_t r_off  = (e_off + e_size);
+    uint32_t r_size = (nsize - csize);
 
     writeNum(l_off);
     writeNum(l_size);
@@ -204,8 +204,8 @@ int main(int argc, char *argv[]) {
 
   std::cout<<"Loading MapInfo file '"<<argv[1]<<"'\n";
 
-  unsigned int width  = 0;
-  unsigned int height = 0;
+  uint32_t width  = 0;
+  uint32_t height = 0;
 
   map m;
   
@@ -251,7 +251,7 @@ int main(int argc, char *argv[]) {
 
       std::string num = "";
       
-      std::vector<unsigned short> ldat;
+      std::vector<uint16_t> ldat;
       
       char c = '\0';
       while(lay.get(c)) {
