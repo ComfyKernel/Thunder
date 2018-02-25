@@ -39,6 +39,8 @@ private:
 
   gl::texture tex1;
   gl::texture tex2;
+
+  map tmap;
   
 public:
   const std::string& name() const { return _name; }
@@ -60,6 +62,8 @@ public:
 
     tfbo.create(uint2d(1280 / 4, 720 / 4));
     scr.setTexture(tfbo.texture());
+
+    tmap.load("testmap/testmap.cmf");
 
     rectoidGravity(float2d(0.f, -0.1f));
     
