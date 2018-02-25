@@ -105,6 +105,10 @@ public:
     
   }
 
+  void onEventPoll(SDL_Event& event) {
+
+  }
+
   void onDraw     (float delta) {
     tfbo.bind();
 

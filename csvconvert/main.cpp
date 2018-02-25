@@ -282,7 +282,7 @@ int main(int argc, char *argv[]) {
 
 	for(unsigned int x = 0; x < m.width; ++x) {
 	  for(unsigned int y = 0; y < m.height; ++y) {
-	    if(l.data[x + (y * m.width)] != 0) {
+	    if(l.data[x + (((m.height - y) - 1) * m.width)] != 0) {
 	      unsigned int index = l.m_vertices.size() / 2;
 
 	      // Vertices //
@@ -311,23 +311,23 @@ int main(int argc, char *argv[]) {
 
 	      // UVs //
 
-	      unsigned int dat = l.data[x + (y * m.width)];
+	      unsigned int dat = l.data[x + (((m.height - y) - 1) * m.width)];
 
 	      float uv_s = (1.f / 32.f);
 	      float uv_x = uv_s * (dat % 32);
 	      float uv_y = 1.f - (uv_s * (dat / 32));
 
 	      l.m_uvs.push_back(uv_x);
-	      l.m_uvs.push_back(uv_y);
-
-	      l.m_uvs.push_back(uv_x + uv_s);
-	      l.m_uvs.push_back(uv_y);
-
+	      l.m_uvs.push_back(uv_y + uv_s);
+	      
 	      l.m_uvs.push_back(uv_x + uv_s);
 	      l.m_uvs.push_back(uv_y + uv_s);
 
+	      l.m_uvs.push_back(uv_x + uv_s);
+	      l.m_uvs.push_back(uv_y);
+	      
 	      l.m_uvs.push_back(uv_x);
-	      l.m_uvs.push_back(uv_y + uv_s);
+	      l.m_uvs.push_back(uv_y);
 	    }
 	  }
 	}

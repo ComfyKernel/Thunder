@@ -86,7 +86,7 @@ float th::game::time () { return _gimpl->win.milliseconds(); }
 
 bool th::game::run(const uint2d& pos, const uint2d& size) {
   _curr_game = this;
-  
+
   if(!_gimpl->create(name(), pos, size)) {
     std::cout<<"Cannot run, window failed to create.\n";
     return false;
@@ -101,7 +101,8 @@ bool th::game::run(const uint2d& pos, const uint2d& size) {
   _gimpl->__spr_prog.create({spr_vshad, spr_fshad});
 
   const uint2d& w_size = _gimpl->win.size();
-  
+
+  camera = glm::mat4(1.f);
   _gimpl->__ortho = glm::ortho(0.f, (float)w_size.x, 0.f, (float)w_size.y, -0.1f, 100.f);
 
   onStart();
@@ -115,7 +116,7 @@ bool th::game::run(const uint2d& pos, const uint2d& size) {
     t_deltaStart = _gimpl->win.milliseconds();
     t_delta = (t_deltaStart - t_deltaEnd) / 1000.f;
     
-    _gimpl->win.pollEvents();
+    _gimpl->win.pollEvents(this);
 
     onUpdate(t_delta);
 

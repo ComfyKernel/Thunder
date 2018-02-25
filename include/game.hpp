@@ -22,6 +22,7 @@ extern "C" {
     
     public:
       glm::mat4&   getOrtho();
+      glm::mat4    camera;
       gl::program& getSpriteShader();
       
       static game& currentGame();
@@ -39,6 +40,8 @@ extern "C" {
 
       virtual void onStart () { };
       virtual void onExit  () { };
+
+      virtual void onEventPoll(SDL_Event&) { }
     
       virtual void onUpdate   (float) { };
 

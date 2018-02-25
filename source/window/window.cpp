@@ -1,4 +1,5 @@
 #include "../../include/window.hpp"
+#include "../../include/game.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -92,12 +93,17 @@ public:
     SDL_GL_DeleteContext(ctx);
   }
 
-  void poll() {
+  void poll(game* callback) {
     SDL_Event event;
-    SDL_PollEvent(&event);
+    
+    while(SDL_PollEvent(&event)) { 
+      if(event.type == SDL_QUIT) {
+	open = false;
+      }
 
-    if(event.type == SDL_QUIT) {
-      open = false;
+      if(callback != nullptr) {
+	callback->onEventPoll(event);
+      }
     }
   }
 
@@ -134,8 +140,8 @@ bool th::window::isOpen() {
   return _wimpl->open;
 }
 
-void th::window::pollEvents() {
-  _wimpl->poll();
+void th::window::pollEvents(game* callback) {
+  _wimpl->poll(callback);
 }
 
 void th::window::swap() {

@@ -56,6 +56,11 @@ check:
 csv:
 	g++ $(wildcard $(ORIGIN)/csvconvert/*.cpp) -std=c++17 -o $(BUILD)/csv2map
 
+testcsv:
+	cd $(BUILD)/testmap
+	../csv2map testmap.info testmap.cmf
+	cd $(ORIGIN)
+
 submodules:
 	git submodule init
 	git submodule update

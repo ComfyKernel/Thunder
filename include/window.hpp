@@ -4,8 +4,12 @@
 #include "units/special.hpp"
 
 #include <string>
+#include <SDL2/SDL.h>
+
 extern "C" {
   namespace th {
+    class game;
+    
     class window {
     private:
       class _impl;
@@ -26,7 +30,7 @@ extern "C" {
       void close();
 
       bool isOpen    ();
-      void pollEvents();
+      void pollEvents(game*);
       void swap      ();
 
       unsigned int       milliseconds() const;
