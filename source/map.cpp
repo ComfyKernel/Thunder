@@ -42,5 +42,11 @@ bool map::load(const std::string& file) {
 
   std::cout<<"Map size : W: "<<width<<" H: "<<height<<"\n";
 
+  layer l;
+
+  
+  
+  layers.push_back(l);
+
   return true;
 }
