@@ -24,6 +24,8 @@ private:
 
   rectoid thing2_col = rectoid(float2d(64.f, 20.f),
 			       float2d(16.f, 16.f));
+  rectoid rect_bleh  = rectoid(float2d(0.f , 0.f),
+			       float2d(16.f, 16.f));
   
   rn::mesh tmesh;
 
@@ -83,6 +85,9 @@ public:
     thing2_col.position = float2d(campos.x, campos.y);
     thing2_col.velocity = float2d(0.f, 0.f);
 
+    //rect_bleh.position = thing2_col.position;
+    //rect_bleh.position.y -= 32.f;
+
     campos = uint2d(campos.x - ((1280 / 4) / 2), campos.y - ((720 / 4) / 2));
 
     glEnable(GL_BLEND);
@@ -108,6 +113,8 @@ public:
     stepRectoid();
 
     thing2.position = int2d(thing2_col.position.x, thing2_col.position.y);
+
+    campos = uint2d(thing2.position.x - ((1280 / 4) / 2), thing2.position.y - ((720 / 4) / 2));
 
     if(cm_up) {
       campos.y += (200 * delta);
@@ -171,7 +178,7 @@ public:
 
     glClearColor(0, 0, 0, 1);
     glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     thing2.draw();
 
     rn::sprite::drawSprites();
@@ -200,6 +207,15 @@ public:
     
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
+
+    for(int i=0; i<tmap.colliders.size(); ++i) {
+      thing2.position = int2d(tmap.colliders[i].position.x,
+			      tmap.colliders[i].position.y);
+
+      thing2.draw();
+      
+      rn::sprite::drawSprites();
+    }
 
     gl::framebuffer::clear();
 

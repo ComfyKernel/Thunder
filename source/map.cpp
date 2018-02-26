@@ -56,9 +56,12 @@ bool map::load(const std::string& file) {
     
     uint32_t r_off;
     uint32_t r_size;
+
+    uint32_t c_off;
+    uint32_t c_size;
   } f_map;
 
-  memcpy(&f_map.l_off, &dat[(dat.size()) - (6*sizeof(uint32_t))], 6*sizeof(uint32_t));
+  memcpy(&f_map.l_off, &dat[(dat.size()) - sizeof(f_map)], sizeof(f_map));
 
   std::cout<<"[Map Footer]\n"
 	   <<"Layer offset : "<<f_map.l_off <<"\n"
@@ -67,6 +70,8 @@ bool map::load(const std::string& file) {
 	   <<"Entity size   : "<<f_map.e_size<<"\n"
 	   <<"RoomTrigger offset : "<<f_map.r_off <<"\n"
 	   <<"RoomTrigger size   : "<<f_map.r_size<<"\n"
+	   <<"Collider offset : "<<f_map.c_off <<"\n"
+	   <<"Collider size   : "<<f_map.c_size<<"\n"
 	   <<"--------------------------\n";
 
   uint32_t c_lay_off = f_map.l_off;
@@ -166,8 +171,38 @@ bool map::load(const std::string& file) {
     entities.push_back(ent);
     
     c_ent_size += 3 * sizeof(uint32_t);
+    c_ent_off  += 3 * sizeof(uint32_t);
     
-    more_entities = (c_ent_size > f_map.e_size);
+    more_entities = (c_ent_size < f_map.e_size);
+  }
+
+  bool more_colliders = true;
+
+  uint32_t c_col_size = 0;
+  uint32_t c_col_off  = f_map.c_off;
+
+  while(more_colliders) {
+
+    struct {
+      uint32_t x;
+      uint32_t y;
+
+      uint32_t w;
+      uint32_t h;
+    } col;
+
+    std::memcpy(&col.x, &dat[c_col_off], 4 * sizeof(uint32_t));
+
+    std::cout<<"[Collider] X : "<<col.x<<" Y : "<<col.y<<" W : "
+	                        <<col.w<<" H : "<<col.h<<"\n";
+
+    rectoid* rec = new rectoid(float2d((float)col.x, (float)col.y),
+			       float2d((float)col.w, (float)col.h));
+
+    c_col_size += 4 * sizeof(uint32_t);
+    c_col_off  += 4 * sizeof(uint32_t);
+
+    more_colliders = (c_col_size < f_map.c_size);
   }
   
   return true;

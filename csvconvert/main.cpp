@@ -125,6 +125,29 @@ public:
   }
 };
 
+struct collider {
+public:
+  uint32_t x;
+  uint32_t y;
+
+  uint32_t w;
+  uint32_t h;
+
+  void getBin(std::vector<char>& vec) {
+    auto writeNum = [&](uint32_t n) {
+      vec.push_back(*( (char*)(&n)));
+      vec.push_back(*(((char*)(&n)) + 1));
+      vec.push_back(*(((char*)(&n)) + 2));
+      vec.push_back(*(((char*)(&n)) + 3));
+    };
+
+    writeNum(x);
+    writeNum(y);
+    writeNum(w);
+    writeNum(h);
+  }
+};
+
 struct map {
 public:
   uint32_t width;
@@ -133,6 +156,7 @@ public:
   std::vector<layer>       layers;
   std::vector<entity>      entities;
   std::vector<roomtrigger> roomtriggers;
+  std::vector<collider>    colliders;
 
   void getBin(std::vector<char>& vec) {
     auto writeNum = [&](uint32_t n) {
@@ -180,12 +204,25 @@ public:
     uint32_t r_off  = (e_off + e_size);
     uint32_t r_size = (nsize - csize);
 
+    csize = vec.size();
+
+    for(int i=0; i<colliders.size(); ++i) {
+      colliders[i].getBin(vec);
+    }
+    
+    nsize = vec.size();
+
+    uint32_t c_off  = (r_off + r_size);
+    uint32_t c_size = (nsize - csize);
+
     writeNum(l_off);
     writeNum(l_size);
     writeNum(e_off);
     writeNum(e_size);
     writeNum(r_off);
     writeNum(r_size);
+    writeNum(c_off);
+    writeNum(c_size);
   }
 };
 
@@ -326,6 +363,23 @@ int main(int argc, char *argv[]) {
 	  }
 	}
 	break;
+      case LT_COLLISION: {
+	for(unsigned int i=0; i<ldat.size(); ++i) {
+	  if(ldat[i] == 0) continue;
+
+	  collider c;
+
+	  c.x = (i % m.width) * 16;
+	  c.y = ((m.height - (i / m.width)) - 1) * 16;
+
+	  c.w = 16;
+	  c.h = 16;
+	  
+	  m.colliders.push_back(c);
+	}
+	
+	break;
+      }
       case LT_LOGIC: {
 	for(unsigned int i=0; i<ldat.size(); ++i) {
 	  if(ldat[i] == 0) continue;
@@ -348,7 +402,7 @@ int main(int argc, char *argv[]) {
 	    entity e;
 
 	    e.x = (i % m.width ) * 16;
-	    e.y = (m.height - (i / m.height)) * 16;
+	    e.y = ((m.height - (i / m.width)) - 1) * 16;
 
 	    if(state == 0) {
 	      e.id = 0; // TODO //
@@ -364,7 +418,7 @@ int main(int argc, char *argv[]) {
 	    roomtrigger rt;
 
 	    rt.x = (i % m.width ) * 16;
-	    rt.y = (m.height - (i / m.height)) * 16;
+	    rt.y = ((m.height - (i / m.width)) - 1) * 16;
 
 	    std::cout<<"Adding roomtrigger ( X: "<<rt.x<<" Y: "<<rt.y<<" )\n";
 
@@ -384,18 +438,18 @@ int main(int argc, char *argv[]) {
       std::cout<<"Failed to open layer file '"<<l.filename<<"'!\n";
       exit(2);
     }
-
-    std::cout<<"Writing to file '"<<argv[2]<<"'\n";
-    
-    std::ofstream ofile(argv[2], std::ios::out | std::ofstream::binary);
-
-    std::vector<char> binDat;
-    m.getBin(binDat);
-
-    ofile.write(&binDat[0], binDat.size());
-
-    ofile.close();
     
     lay.close();
   }
+
+  std::cout<<"Writing to file '"<<argv[2]<<"'\n";
+    
+  std::ofstream ofile(argv[2], std::ios::out | std::ofstream::binary);
+  
+  std::vector<char> binDat;
+  m.getBin(binDat);
+  
+  ofile.write(&binDat[0], binDat.size());
+  
+  ofile.close();
 }

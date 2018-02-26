@@ -2,41 +2,33 @@
 
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 std::vector<rectoid*> rectoids;
 
 float2d gravity;
 
 void stepRectoid() {
-  for(const auto& i : rectoids) {
-    i->velocity += gravity;
-    
-    for(const auto& c : rectoids) {
-      if(i == c) continue;
+  unsigned int count = 0;
 
-      if(i->isColliding(c)) {
-	if(c->isHorizontal(i)) {
-	  if(!i->frozen) {
-	    if(i->bounce && abs(i->velocity.y) > 2.f) {
-	      // i->velocity.y = -i->velocity.y / 1.5;
-	    } else {
-	      i->velocity.y = 0;
-	    }
-	    if(i->position.y > c->position.y) {
-	      i->position.y = c->position.y + c->size.y - 1.f;
-	    } else {
-	      i->position.y = c->position.y - i->size.y;
-	    }
-	    i->velocity.x /= 1.15;
-	  }
-	} else if(c->isVertical(i)) {
-	  i->velocity.x = 0;
-	}
+  for(unsigned int i=0; i < rectoids.size(); ++i) {
+    count++;
+
+    if(!rectoids[i]->frozen) {
+      rectoids[i]->velocity +=gravity;
+    }
+
+    for(unsigned int c=0; c < rectoids.size(); ++c) {
+      if(c == i) continue;
+
+      if(rectoids[i]->isColliding(rectoids[c])) {
+	rectoids[i]->velocity.x = 0;
+	rectoids[i]->velocity.y = 0;
       }
     }
 
-    if(!i->frozen) {
-      i->position += i->velocity;
+    if(!rectoids[i]->frozen) {
+      rectoids[i]->position += rectoids[i]->velocity;
     }
   }
 }

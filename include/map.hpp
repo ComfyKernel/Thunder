@@ -5,6 +5,7 @@
 #include <string>
 
 #include "gl/buffer.hpp"
+#include "rectoid.hpp"
 
 struct entity {
   uint32_t x;
@@ -27,8 +28,9 @@ public:
   unsigned int width;
   unsigned int height;
 
-  std::vector<layer>  layers;
-  std::vector<entity> entities;
+  std::vector<layer>   layers;
+  std::vector<entity>  entities;
+  std::vector<rectoid> colliders;
 
   map();
   map(const std::string&);
