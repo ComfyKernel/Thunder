@@ -6,5 +6,5 @@ out vec4 frag;
 uniform sampler2D TEX;
 
 void main() {
-     frag = vec4(texture(TEX, uv).xyz, 1.0);
+     frag = texture(TEX, uv);
 }

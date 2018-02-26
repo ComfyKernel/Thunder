@@ -7,12 +7,8 @@
 #include <string>
 #include <utility>
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
 enum layertype {
-  LT_FOREGROUND,
-  LT_BACKGROUND,
+  LT_PROP,
   LT_COLLISION,
   LT_LOGIC,
   LT_PATH,
@@ -22,8 +18,7 @@ enum layertype {
 typedef std::pair<std::string, layertype> _layerpair;
 
 _layerpair _layerpairs[] = {
-  _layerpair("_foreground", LT_FOREGROUND),
-  _layerpair("_background", LT_BACKGROUND),
+  _layerpair("_prop_"     , LT_PROP      ),
   _layerpair("_collision" , LT_COLLISION ),
   _layerpair("_logic"     , LT_LOGIC     ),
   _layerpair("_path_"     , LT_PATH      ),
@@ -152,7 +147,7 @@ public:
     
     uint32_t csize = vec.size();
 
-    for(int i=0; i<layers.size(); ++i) {
+    for(int i=layers.size() - 1; i>=0; --i) {
       if(!layers[i].special) {
 	layers[i].getBin(vec);
       }
@@ -274,8 +269,7 @@ int main(int argc, char *argv[]) {
       }
 
       switch(l.ltype) {
-      case LT_BACKGROUND:
-      case LT_FOREGROUND:
+      case LT_PROP:
 	l.data = ldat;
 
 	std::cout<<"Generating mesh...\n";
@@ -315,7 +309,7 @@ int main(int argc, char *argv[]) {
 
 	      float uv_s = (1.f / 32.f);
 	      float uv_x = uv_s * (dat % 32);
-	      float uv_y = 1.f - (uv_s * (dat / 32));
+	      float uv_y = uv_s * (dat / 32);
 
 	      l.m_uvs.push_back(uv_x);
 	      l.m_uvs.push_back(uv_y + uv_s);

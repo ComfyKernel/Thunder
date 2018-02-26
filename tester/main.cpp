@@ -86,6 +86,9 @@ public:
 
     thing2_col.frozen = false;
     thing2_col.velocity = float2d(-0.5f, 5.f);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     std::cout<<"Finished Startup\n";
   }
@@ -124,7 +127,7 @@ public:
       campos.x += (200 * delta);
     }
     
-    camera = glm::translate(glm::mat4(1.f), glm::vec3(-(float)campos.x, -(float)campos.y, 0.f));
+    camera = glm::translate(glm::mat4(1.f), glm::vec3(-(double)campos.x, -(double)campos.y, 0.0));
   }
 
   void onDrawStart(float delta) {
@@ -171,7 +174,8 @@ public:
   void onDraw     (float delta) {
     tfbo.bind();
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0, 0, 0, 1);
+    glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     floor.draw();
     thing.draw();
@@ -182,22 +186,24 @@ public:
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
+    mapmat = getOrtho() * camera;
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture  (GL_TEXTURE_2D, mapset);
 
-    glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[0].vbuff);
-    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void*)0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[0].ubuff);
-    glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, (void*)0);
-
-    mapmat = getOrtho() * camera;
-    
     glUniform1i       (mp_tex, 0);
     glUniformMatrix4fv(mp_mat, 1, false, &mapmat[0][0]);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tmap.layers[0].ibuff);
-    glDrawElements(GL_TRIANGLES, tmap.layers[0].icount, GL_UNSIGNED_INT, (void*)0);
+    
+    for(unsigned int i=0; i<tmap.layers.size(); ++i) {
+      glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[i].vbuff);
+      glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void*)0);
+      
+      glBindBuffer(GL_ARRAY_BUFFER, tmap.layers[i].ubuff);
+      glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, (void*)0);
+      
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tmap.layers[i].ibuff);
+      glDrawElements(GL_TRIANGLES, tmap.layers[i].icount, GL_UNSIGNED_INT, (void*)0);
+    }
     
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
