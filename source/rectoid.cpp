@@ -10,25 +10,39 @@ float2d gravity;
 
 void stepRectoid() {
   unsigned int count = 0;
-
-  for(unsigned int i=0; i < rectoids.size(); ++i) {
+  
+  for(const auto& i : rectoids) {
     count++;
 
-    if(!rectoids[i]->frozen) {
-      rectoids[i]->velocity +=gravity;
-    }
-
-    for(unsigned int c=0; c < rectoids.size(); ++c) {
+    if(!i->frozen)
+      i->velocity += gravity;
+    
+    for(const auto& c : rectoids) {
       if(c == i) continue;
 
-      if(rectoids[i]->isColliding(rectoids[c])) {
-	rectoids[i]->velocity.x = 0;
-	rectoids[i]->velocity.y = 0;
+      if(i->isColliding(c)) {
+	if(c->isHorizontal(i)) {
+	  if(!i->frozen) {
+	    if(i->bounce && abs(i->velocity.y) > 0.2f) {
+	      i->velocity.y = -i->velocity.y / 1.5;
+	    } else {
+	      i->velocity.y = 0;
+	    }
+	    if(i->position.y > c->position.y) {
+	      i->position.y = c->position.y + c->size.y - 1.f;
+	    } else {
+	      i->position.y = c->position.y - i->size.y;
+	    }
+	    i->velocity.x /= 1.15;
+	  }
+	} else if(c->isVertical(i)) {
+	  i->velocity.x = 0;
+	}
       }
     }
 
-    if(!rectoids[i]->frozen) {
-      rectoids[i]->position += rectoids[i]->velocity;
+    if(!i->frozen) {
+      i->position += i->velocity;
     }
   }
 }

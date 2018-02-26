@@ -82,8 +82,9 @@ public:
     rectoidGravity(float2d(0.f, -0.1f));
     
     thing2_col.frozen   = false;
+    thing2_col.bounce   = true;
     thing2_col.position = float2d(campos.x, campos.y);
-    thing2_col.velocity = float2d(0.f, 0.f);
+    thing2_col.velocity = float2d(5.5f, 2.5f);
 
     //rect_bleh.position = thing2_col.position;
     //rect_bleh.position.y -= 32.f;

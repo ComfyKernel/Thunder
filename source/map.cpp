@@ -193,9 +193,6 @@ bool map::load(const std::string& file) {
 
     std::memcpy(&col.x, &dat[c_col_off], 4 * sizeof(uint32_t));
 
-    std::cout<<"[Collider] X : "<<col.x<<" Y : "<<col.y<<" W : "
-	                        <<col.w<<" H : "<<col.h<<"\n";
-
     rectoid* rec = new rectoid(float2d((float)col.x, (float)col.y),
 			       float2d((float)col.w, (float)col.h));
 
