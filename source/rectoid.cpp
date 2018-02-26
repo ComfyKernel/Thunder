@@ -25,8 +25,20 @@ void stepRectoid() {
 	  if(!i->frozen) {
 	    if(i->bounce && abs(i->velocity.y) > 2.f) {
 	      i->velocity.y = -i->velocity.y / 1.5;
+
+	      if(i->position.y > c->position.y) {
+		i->position.y = c->position.y + c->size.y;
+	      } else {
+		i->position.y = c->position.y - i->size.y;
+	      }
 	    } else {
 	      if(i->velocity.y < 0) i->velocity.y = 0;
+
+	      if(i->position.y > c->position.y) {
+		i->position.y = c->position.y + c->size.y;
+	      } else {
+		i->position.y = c->position.y - i->size.y;
+	      }
 	    }
 	    i->velocity.x /= 1.15;
 
@@ -41,8 +53,20 @@ void stepRectoid() {
 	  if(!i->frozen) {
 	    if(i->bounce && abs(i->velocity.x) > 2.f) {
 	      i->velocity.x = -i->velocity.x / 1.5;
+
+	      if(i->position.x > c->position.x) {
+		i->position.x = c->position.x + c->size.x;
+	      } else {
+		i->position.x = c->position.x - i->size.x;
+	      }
 	    } else {
 	      if(i->velocity.x < 0) i->velocity.x = 0;
+
+	      if(i->position.x > c->position.x) {
+		i->position.x = c->position.x + c->size.x;
+	      } else {
+		i->position.x = c->position.x - i->size.x;
+	      }
 	    }
 
 	    if(i->position.x + i->size.x > c->position.x &&
