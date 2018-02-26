@@ -24,8 +24,6 @@ private:
 
   rectoid thing2_col = rectoid(float2d(64.f, 20.f),
 			       float2d(16.f, 16.f));
-  rectoid rect_bleh  = rectoid(float2d(0.f , 0.f),
-			       float2d(16.f, 16.f));
   
   rn::mesh tmesh;
 
@@ -82,9 +80,9 @@ public:
     rectoidGravity(float2d(0.f, -0.1f));
     
     thing2_col.frozen   = false;
-    thing2_col.bounce   = true;
+    thing2_col.bounce   = false;
     thing2_col.position = float2d(campos.x, campos.y);
-    thing2_col.velocity = float2d(5.0f, 2.5f);
+    thing2_col.velocity = float2d(0.0f, 0.0f);
 
     //rect_bleh.position = thing2_col.position;
     //rect_bleh.position.y -= 32.f;
@@ -119,15 +117,19 @@ public:
 
     if(cm_up) {
       campos.y += (200 * delta);
+      thing2_col.velocity.y += 0.5;
     }
     if(cm_down) {
       campos.y -= (200 * delta);
+      thing2_col.velocity.y -= 0.5;
     }
     if(cm_left) {
       campos.x -= (200 * delta);
+      thing2_col.velocity.x -= 0.25;
     }
     if(cm_right) {
       campos.x += (200 * delta);
+      thing2_col.velocity.x += 0.25;
     }
     
     camera = glm::translate(glm::mat4(1.f), glm::vec3(-(double)campos.x, -(double)campos.y, 0.0));

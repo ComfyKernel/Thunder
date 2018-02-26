@@ -26,7 +26,7 @@ void stepRectoid() {
 	    if(i->bounce && abs(i->velocity.y) > 2.f) {
 	      i->velocity.y = -i->velocity.y / 1.5;
 	    } else {
-	      i->velocity.y = 0;
+	      if(i->velocity.y < 0) i->velocity.y = 0;
 	    }
 	    i->velocity.x /= 1.15;
 
@@ -42,7 +42,7 @@ void stepRectoid() {
 	    if(i->bounce && abs(i->velocity.x) > 2.f) {
 	      i->velocity.x = -i->velocity.x / 1.5;
 	    } else {
-	      i->velocity.x = 0;
+	      if(i->velocity.x < 0) i->velocity.x = 0;
 	    }
 
 	    if(i->position.x + i->size.x > c->position.x &&
