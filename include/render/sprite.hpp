@@ -13,6 +13,7 @@ namespace rn {
   public:
     GLuint __texture;
     bool   __is_drawing = false;
+    bool ignoreCamera = false;
     
     static void drawSprites();
 

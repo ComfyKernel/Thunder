@@ -150,6 +150,25 @@ bool map::load(const std::string& file) {
     
     layers.push_back(l);
   }
+
+  bool more_entities = true;
+
+  uint32_t c_ent_size = 0;
+  uint32_t c_ent_off  = f_map.e_off;
+
+  while(more_entities) {
+    entity ent;
+
+    std::memcpy(&ent.x, &dat[c_ent_off], 3 * sizeof(uint32_t));
+
+    std::cout<<"[Entity]\nX  : "<<ent.x<<"\nY  : "<<ent.y<<"\nID : "<<ent.id<<"\n";
+
+    entities.push_back(ent);
+    
+    c_ent_size += 3 * sizeof(uint32_t);
+    
+    more_entities = (c_ent_size > f_map.e_size);
+  }
   
   return true;
 }

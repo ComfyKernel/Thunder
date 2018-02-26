@@ -97,12 +97,16 @@ void __draw_active_sprites() {
       i->__is_drawing = false;
       
       __sprite_out = __sprite_ortho;
+
+      if(!i->ignoreCamera) {
+	__sprite_out *= th::game::currentGame().camera;
+      }
       
       __sprite_out *= glm::translate(glm::mat4(1),
 				     glm::vec3(i->position.x, i->position.y, 0.f));
       __sprite_out *= glm::scale(glm::mat4(1),
 				 glm::vec3(i->size.x, i->size.y, 0.f));
-
+      
       glBindTexture(GL_TEXTURE_2D, i->__texture);
       
       if(i->textureIndependent) {

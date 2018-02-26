@@ -16,22 +16,12 @@ class testgame : public th::game {
 private:
   const std::string _name = "Test Game";
 
-  rn::sprite floor = rn::sprite(int2d(0 , 0 ),
-				int2d(128, 16));
-
-  rn::sprite thing = rn::sprite(int2d(16, 20),
-				int2d(16, 16));
-
-  rn::sprite thing2 = rn::sprite(int2d(64, 20),
+  rn::sprite thing2 = rn::sprite(int2d(16, 16),
 				 int2d(16, 16));
   
   rn::sprite scr   = rn::sprite(int2d(0   , 0  ),
 				int2d(1280, 720));
 
-  rectoid floor_col = rectoid(float2d(0.f, 0.f),
-			      float2d(128.f, 16.f));
-  rectoid thing_col = rectoid(float2d(16.f, 20.f),
-			      float2d(16.f, 16.f));
   rectoid thing2_col = rectoid(float2d(64.f, 20.f),
 			       float2d(16.f, 16.f));
   
@@ -53,6 +43,8 @@ private:
   glm::mat4 mapmat;
   
 public:
+  uint2d campos = uint2d(0, 0);
+  
   const std::string& name() const { return _name; }
 
   void onStart() {
@@ -67,25 +59,31 @@ public:
     tex2.load("testimage2.png");
     mapset.load("test-tileset.png");
     
-    floor.setTexture(tex1);
-    thing.setTexture(tex2);
     thing2.setTexture(tex2);
 
     tfbo.create(uint2d(1280 / 4, 720 / 4));
     scr.setTexture(tfbo.texture());
+    scr.ignoreCamera = true;
 
     tmap.load("testmap/testmap.cmf");
+
+    for(const auto& e : tmap.entities) {
+      if(e.id == 1) {
+	campos = uint2d(e.x, e.y);
+	break;
+      }
+    }
 
     mp_tex = glGetUniformLocation(getSpriteShader(), "TEX");
     mp_mat = glGetUniformLocation(getSpriteShader(), "PVM");
 
     rectoidGravity(float2d(0.f, -0.1f));
     
-    thing_col.frozen = false;
-    thing_col.velocity = float2d(0.5f, 5.f);
+    thing2_col.frozen   = false;
+    thing2_col.position = float2d(campos.x, campos.y);
+    thing2_col.velocity = float2d(0.f, 0.f);
 
-    thing2_col.frozen = false;
-    thing2_col.velocity = float2d(-0.5f, 5.f);
+    campos = uint2d(campos.x - ((1280 / 4) / 2), campos.y - ((720 / 4) / 2));
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -101,8 +99,6 @@ public:
     std::cout<<"Exiting\n";
   }
 
-  uint2d campos = uint2d(0, 0);
-
   bool cm_up    = false;
   bool cm_down  = false;
   bool cm_right = false;
@@ -111,7 +107,6 @@ public:
   void onUpdate   (float delta) {
     stepRectoid();
 
-    thing.position  = int2d(thing_col.position.x, thing_col.position.y);
     thing2.position = int2d(thing2_col.position.x, thing2_col.position.y);
 
     if(cm_up) {
@@ -177,8 +172,6 @@ public:
     glClearColor(0, 0, 0, 1);
     glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    floor.draw();
-    thing.draw();
     thing2.draw();
 
     rn::sprite::drawSprites();

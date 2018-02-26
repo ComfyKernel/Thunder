@@ -6,6 +6,13 @@
 
 #include "gl/buffer.hpp"
 
+struct entity {
+  uint32_t x;
+  uint32_t y;
+
+  uint32_t id;
+};
+
 struct layer {
 public:
   gl::buffer vbuff;
@@ -20,7 +27,8 @@ public:
   unsigned int width;
   unsigned int height;
 
-  std::vector<layer> layers;
+  std::vector<layer>  layers;
+  std::vector<entity> entities;
 
   map();
   map(const std::string&);
