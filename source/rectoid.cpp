@@ -8,76 +8,46 @@ std::vector<rectoid*> rectoids;
 
 float2d gravity;
 
+float drag = 1.15f;
+
 void stepRectoid() {
   unsigned int count = 0;
   
   for(const auto& i : rectoids) {
     count++;
 
-    if(!i->frozen)
-      i->velocity += gravity;
-    
     for(const auto& c : rectoids) {
       if(c == i) continue;
 
+      if(i->ignoreActive && !c->frozen) {
+	continue;
+      }
+      
       if(i->isColliding(c)) {
-	if(c->isHorizontal(i)) {
-	  if(!i->frozen) {
-	    if(i->bounce && abs(i->velocity.y) > 2.f) {
-	      i->velocity.y = -i->velocity.y / 1.5;
+	i->colliding = true;
 
-	      if(i->position.y > c->position.y) {
-		i->position.y = c->position.y + c->size.y;
-	      } else {
-		i->position.y = c->position.y - i->size.y;
-	      }
-	    } else {
-	      if(i->velocity.y < 0) i->velocity.y = 0;
-
-	      if(i->position.y > c->position.y) {
-		i->position.y = c->position.y + c->size.y;
-	      } else {
-		i->position.y = c->position.y - i->size.y;
-	      }
-	    }
-	    i->velocity.x /= 1.15;
-
-	    if(i->position.y < c->position.y + c->size.y) {
-	      int dst = ((c->position.y + c->size.y) - i->position.y);
-	      if(abs(dst) > 1) {
-		i->position.y += dst;
-	      }
-	    }
-	  }
-	} else if(c->isVertical(i)) {
-	  if(!i->frozen) {
-	    if(i->bounce && abs(i->velocity.x) > 2.f) {
-	      i->velocity.x = -i->velocity.x / 1.5;
-
-	      if(i->position.x > c->position.x) {
-		i->position.x = c->position.x + c->size.x;
-	      } else {
-		i->position.x = c->position.x - i->size.x;
-	      }
-	    } else {
-	      if(i->velocity.x < 0) i->velocity.x = 0;
-
-	      if(i->position.x > c->position.x) {
-		i->position.x = c->position.x + c->size.x;
-	      } else {
-		i->position.x = c->position.x - i->size.x;
-	      }
-	    }
-
-	    if(i->position.x + i->size.x > c->position.x &&
-	       !i->position.x > c->position.x) {
-	      i->position.x -= ((i->position.x + i->size.x) - c->position.x);
-	    }
-	  }
+	float dstx = 0.f;
+	float dsty = 0.f;
+	
+	if(i->position.y > c->position.y) {
+	  dsty = abs(i->position.y - (c->position.y + c->size.y));
+	} else {
+	  dsty = abs(i->position.y - c->position.y);
 	}
+
+	if(i->position.x > c->position.x) {
+	  dstx = abs(i->position.x - (c->position.x + c->size.x));
+	} else {
+	  dstx = abs(i->position.x - c->position.x);
+	}
+	
+	i->coldst = float2d(dstx, dsty);
+	break;
+      } else {
+	i->colliding = false;
       }
     }
-
+    
     if(!i->frozen) {
       i->position += i->velocity;
     }

@@ -25,6 +25,17 @@ private:
   rectoid thing2_col = rectoid(float2d(64.f, 20.f),
 			       float2d(16.f, 16.f));
   
+  rectoid ply_col_body    = rectoid(float2d(0.f, 0.f),
+				    float2d(16.f, 16.f));
+  rectoid ply_col_top     = rectoid(float2d(0.f, 0.f),
+				    float2d(14.f, 2.f));
+  rectoid ply_col_bottom  = rectoid(float2d(0.f, 0.f),
+				    float2d(14.f, 2.f));
+  rectoid ply_col_left    = rectoid(float2d(0.f, 0.f),
+				    float2d(2.f, 12.f));
+  rectoid ply_col_right   = rectoid(float2d(0.f, 0.f),
+				    float2d(2.f, 12.f));
+  
   rn::mesh tmesh;
 
   gl::framebuffer tfbo;
@@ -79,10 +90,17 @@ public:
 
     rectoidGravity(float2d(0.f, -0.1f));
     
-    thing2_col.frozen   = false;
     thing2_col.bounce   = false;
-    thing2_col.position = float2d(campos.x, campos.y);
     thing2_col.velocity = float2d(0.0f, 0.0f);
+
+    ply_col_body.frozen   = false;
+    ply_col_body.position = float2d(campos.x, campos.y);
+    ply_col_body.velocity = float2d(0.f, 0.f);
+
+    ply_col_top.ignoreActive    = true;
+    ply_col_bottom.ignoreActive = true;
+    ply_col_left.ignoreActive   = true;
+    ply_col_right.ignoreActive  = true;
 
     //rect_bleh.position = thing2_col.position;
     //rect_bleh.position.y -= 32.f;
@@ -109,28 +127,75 @@ public:
   bool cm_left  = false;
 
   void onUpdate   (float delta) {
+    ply_col_bottom.position.x = ply_col_body.position.x + 1;
+    ply_col_bottom.position.y = ply_col_body.position.y - 1;
+
+    ply_col_top.position.x = ply_col_body.position.x + 1;
+    ply_col_top.position.y = ply_col_body.position.y + ply_col_body.size.y;
+
+    ply_col_left.position.x = ply_col_body.position.x - 4;
+    ply_col_left.position.y = ply_col_body.position.y + 2;
+
+    ply_col_right.position.x = ply_col_body.position.x + ply_col_body.size.x + 1;
+    ply_col_right.position.y = ply_col_body.position.y + 2;
+
     stepRectoid();
-
-    thing2.position = int2d(thing2_col.position.x, thing2_col.position.y);
-
-    campos = uint2d(thing2.position.x - ((1280 / 4) / 2), thing2.position.y - ((720 / 4) / 2));
+    
+    thing2.position = int2d(ply_col_body.position.x, ply_col_body.position.y);
 
     if(cm_up) {
-      campos.y += (200 * delta);
-      thing2_col.velocity.y += 0.5;
+      ply_col_body.velocity.y += 0.5f;
     }
     if(cm_down) {
-      campos.y -= (200 * delta);
-      thing2_col.velocity.y -= 0.5;
+      ply_col_body.velocity.y -= 0.5f;
     }
     if(cm_left) {
-      campos.x -= (200 * delta);
-      thing2_col.velocity.x -= 0.25;
+      ply_col_body.velocity.x -= 0.5f;
     }
     if(cm_right) {
-      campos.x += (200 * delta);
-      thing2_col.velocity.x += 0.25;
+      ply_col_body.velocity.x += 0.5f;
     }
+
+    ply_col_body.velocity.y -= 0.1;
+
+    if(ply_col_bottom.colliding) {
+      if(ply_col_body.velocity.y < 0)
+	ply_col_body.velocity.y = 0;
+
+      ply_col_body.position.y += ply_col_bottom.coldst.y;
+
+      if(!cm_left && !cm_right) {
+	ply_col_body.velocity.x /= 1.25;
+      }
+    }
+
+    if(ply_col_top.colliding) {
+      if(ply_col_body.velocity.y > 0)
+	ply_col_body.velocity.y = 0;
+
+      ply_col_body.position.y -= ply_col_bottom.coldst.y;
+    }
+
+    if(ply_col_left.colliding) {
+      if(ply_col_body.velocity.x < 0)
+	ply_col_body.velocity.x = 0;
+    }
+
+    if(ply_col_right.colliding) {
+      if(ply_col_body.velocity.x > 0)
+	ply_col_body.velocity.x = 0;
+    }
+
+    if(ply_col_body.velocity.x > 2.5f) {
+      ply_col_body.velocity.x = 2.5f;
+    }
+
+    if(ply_col_body.velocity.x < -2.5f) {
+      ply_col_body.velocity.x = -2.5f;
+    }
+
+    campos = uint2d(ply_col_body.position.x - ((1280 / 4) / 2),
+		    ply_col_body.position.y - ((720  / 4) / 2));
     
     camera = glm::translate(glm::mat4(1.f), glm::vec3(-(double)campos.x, -(double)campos.y, 0.0));
   }
@@ -182,8 +247,6 @@ public:
     glClearColor(0, 0, 0, 1);
     glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    thing2.draw();
-
     rn::sprite::drawSprites();
 
     glEnableVertexAttribArray(0);
@@ -211,14 +274,9 @@ public:
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
 
-    for(int i=0; i<tmap.colliders.size(); ++i) {
-      thing2.position = int2d(tmap.colliders[i].position.x,
-			      tmap.colliders[i].position.y);
+    thing2.draw();
 
-      thing2.draw();
-      
-      rn::sprite::drawSprites();
-    }
+    rn::sprite::drawSprites();
 
     gl::framebuffer::clear();
 

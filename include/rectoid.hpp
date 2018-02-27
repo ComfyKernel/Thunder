@@ -9,8 +9,12 @@ public:
   float2d size;
   float2d velocity;
 
-  bool frozen = true;
-  bool bounce = false;
+  bool frozen       = true;
+  bool bounce       = false;
+  bool colliding    = false;
+  bool ignoreActive = false;
+
+  float2d coldst;
   
   rectoid();
   rectoid(const float2d&, const float2d&);
