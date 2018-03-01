@@ -181,6 +181,12 @@ bool map::load(const std::string& file) {
   uint32_t c_col_size = 0;
   uint32_t c_col_off  = f_map.c_off;
 
+  coldata.reserve(width * height);
+  
+  for(unsigned int i=0; i<width * height; ++i) {
+    coldata[i] = 0;
+  }
+  
   while(more_colliders) {
 
     struct {
@@ -193,8 +199,7 @@ bool map::load(const std::string& file) {
 
     std::memcpy(&col.x, &dat[c_col_off], 4 * sizeof(uint32_t));
 
-    rectoid* rec = new rectoid(float2d((float)col.x, (float)col.y),
-			       float2d((float)col.w, (float)col.h));
+    coldata[(col.x / 16) + ((col.y / 16) * width)] = 1;
 
     c_col_size += 4 * sizeof(uint32_t);
     c_col_off  += 4 * sizeof(uint32_t);

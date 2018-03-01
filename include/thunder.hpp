@@ -6,7 +6,6 @@
 #include "game.hpp"
 #include "gl.hpp"
 #include "render.hpp"
-#include "rectoid.hpp"
 #include "map.hpp"
 
 #include <string>

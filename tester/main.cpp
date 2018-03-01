@@ -22,20 +22,6 @@ private:
   rn::sprite scr   = rn::sprite(int2d(0   , 0  ),
 				int2d(1280, 720));
 
-  rectoid thing2_col = rectoid(float2d(64.f, 20.f),
-			       float2d(16.f, 16.f));
-  
-  rectoid ply_col_body    = rectoid(float2d(0.f, 0.f),
-				    float2d(16.f, 16.f));
-  rectoid ply_col_top     = rectoid(float2d(0.f, 0.f),
-				    float2d(14.f, 2.f));
-  rectoid ply_col_bottom  = rectoid(float2d(0.f, 0.f),
-				    float2d(14.f, 2.f));
-  rectoid ply_col_left    = rectoid(float2d(0.f, 0.f),
-				    float2d(2.f, 12.f));
-  rectoid ply_col_right   = rectoid(float2d(0.f, 0.f),
-				    float2d(2.f, 12.f));
-  
   rn::mesh tmesh;
 
   gl::framebuffer tfbo;
@@ -88,22 +74,7 @@ public:
     mp_tex = glGetUniformLocation(getSpriteShader(), "TEX");
     mp_mat = glGetUniformLocation(getSpriteShader(), "PVM");
 
-    rectoidGravity(float2d(0.f, -0.1f));
-    
-    thing2_col.bounce   = false;
-    thing2_col.velocity = float2d(0.0f, 0.0f);
-
-    ply_col_body.frozen   = false;
-    ply_col_body.position = float2d(campos.x, campos.y);
-    ply_col_body.velocity = float2d(0.f, 0.f);
-
-    ply_col_top.ignoreActive    = true;
-    ply_col_bottom.ignoreActive = true;
-    ply_col_left.ignoreActive   = true;
-    ply_col_right.ignoreActive  = true;
-
-    //rect_bleh.position = thing2_col.position;
-    //rect_bleh.position.y -= 32.f;
+    thing2.position = int2d(campos.x, campos.y);
 
     campos = uint2d(campos.x - ((1280 / 4) / 2), campos.y - ((720 / 4) / 2));
 
@@ -121,81 +92,51 @@ public:
     std::cout<<"Exiting\n";
   }
 
-  bool cm_up    = false;
-  bool cm_down  = false;
-  bool cm_right = false;
-  bool cm_left  = false;
+  bool cm_up    = false, cc_up    = false;
+  bool cm_down  = false, cc_down  = false;
+  bool cm_right = false, cc_right = false;
+  bool cm_left  = false, cc_left  = false;
 
   void onUpdate   (float delta) {
-    ply_col_bottom.position.x = ply_col_body.position.x + 1;
-    ply_col_bottom.position.y = ply_col_body.position.y - 1;
+    unsigned int cx = floor(thing2.position.x / 16);
+    unsigned int cy = floor(thing2.position.y / 16);
 
-    ply_col_top.position.x = ply_col_body.position.x + 1;
-    ply_col_top.position.y = ply_col_body.position.y + ply_col_body.size.y;
-
-    ply_col_left.position.x = ply_col_body.position.x - 4;
-    ply_col_left.position.y = ply_col_body.position.y + 2;
-
-    ply_col_right.position.x = ply_col_body.position.x + ply_col_body.size.x + 1;
-    ply_col_right.position.y = ply_col_body.position.y + 2;
-
-    stepRectoid();
+    cc_up    = true;
+    cc_down  = true;
+    cc_left  = true;
+    cc_right = true;
     
-    thing2.position = int2d(ply_col_body.position.x, ply_col_body.position.y);
-
-    if(cm_up) {
-      ply_col_body.velocity.y += 0.5f;
-    }
-    if(cm_down) {
-      ply_col_body.velocity.y -= 0.5f;
-    }
-    if(cm_left) {
-      ply_col_body.velocity.x -= 0.5f;
-    }
-    if(cm_right) {
-      ply_col_body.velocity.x += 0.5f;
+    if(tmap.coldata[cx   +   (cy * tmap.width)] ||
+       tmap.coldata[cx + 1 + (cy * tmap.width)]) {
+      cc_down = false;
+    } else {
+      thing2.position.y -= 1;
     }
 
-    ply_col_body.velocity.y -= 0.1;
-
-    if(ply_col_bottom.colliding) {
-      if(ply_col_body.velocity.y < 0)
-	ply_col_body.velocity.y = 0;
-
-      ply_col_body.position.y += ply_col_bottom.coldst.y;
-
-      if(!cm_left && !cm_right) {
-	ply_col_body.velocity.x /= 1.25;
-      }
+    if(tmap.coldata[cx   +   ((cy + 1) * tmap.width)] ||
+       tmap.coldata[cx + 1 + ((cy + 1) * tmap.width)]) {
+      cc_up = false;
     }
 
-    if(ply_col_top.colliding) {
-      if(ply_col_body.velocity.y > 0)
-	ply_col_body.velocity.y = 0;
-
-      ply_col_body.position.y -= ply_col_bottom.coldst.y;
+    if(tmap.coldata[cx + (cy * tmap.width)]) {
+      cc_left = false;
+    }
+    
+    if(cm_up && cc_up) {
+      thing2.position.y += 2;
+    }
+    if(cm_down && cc_down) {
+      thing2.position.y -= 1;
+    }
+    if(cm_left && cc_left) {
+      thing2.position.x -= 1;
+    }
+    if(cm_right && cc_right) {
+      thing2.position.x += 1;
     }
 
-    if(ply_col_left.colliding) {
-      if(ply_col_body.velocity.x < 0)
-	ply_col_body.velocity.x = 0;
-    }
-
-    if(ply_col_right.colliding) {
-      if(ply_col_body.velocity.x > 0)
-	ply_col_body.velocity.x = 0;
-    }
-
-    if(ply_col_body.velocity.x > 2.5f) {
-      ply_col_body.velocity.x = 2.5f;
-    }
-
-    if(ply_col_body.velocity.x < -2.5f) {
-      ply_col_body.velocity.x = -2.5f;
-    }
-
-    campos = uint2d(ply_col_body.position.x - ((1280 / 4) / 2),
-		    ply_col_body.position.y - ((720  / 4) / 2));
+    campos = uint2d(thing2.position.x - ((1280 / 4) / 2),
+		    thing2.position.y - ((720  / 4) / 2));
     
     camera = glm::translate(glm::mat4(1.f), glm::vec3(-(double)campos.x, -(double)campos.y, 0.0));
   }
